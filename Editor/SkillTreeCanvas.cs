@@ -850,7 +850,11 @@ namespace HeatInteractive.SkillTreeGenerator.Editing
             SkillTreeEditing.AreLinked(a, b) || SkillTreeEditing.Requires(a, b) || SkillTreeEditing.Requires(b, a);
 
         private static (SkillNode, SkillNode) Key(SkillNode a, SkillNode b) =>
-            a.GetInstanceID() < b.GetInstanceID() ? (a, b) : (b, a); // unique, unlike an object hash code that can collide
+#if UNITY_6000_3_OR_NEWER
+            a.GetEntityId().CompareTo(b.GetEntityId()) < 0 ? (a, b) : (b, a); // unique, unlike an object hash code that can collide
+#else
+            a.GetInstanceID() < b.GetInstanceID() ? (a, b) : (b, a);
+#endif
 
         /// Every connected pair once. For a requirement, a is the one needed first.
         private IEnumerable<(SkillNode a, SkillNode b, bool linked, bool required)> Edges()

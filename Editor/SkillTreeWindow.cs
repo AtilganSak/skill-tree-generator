@@ -50,9 +50,15 @@ namespace HeatInteractive.SkillTreeGenerator.Editing
         }
 
         [OnOpenAsset]
+#if UNITY_6000_3_OR_NEWER
         private static bool OnOpenAsset(EntityId entityId, int line)
         {
             if (EditorUtility.EntityIdToObject(entityId) is not SkillTree tree) return false;
+#else
+        private static bool OnOpenAsset(int instanceId, int line)
+        {
+            if (EditorUtility.InstanceIDToObject(instanceId) is not SkillTree tree) return false;
+#endif
             Open(tree);
             return true;
         }
