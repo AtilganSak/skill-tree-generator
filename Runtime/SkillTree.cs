@@ -7,8 +7,8 @@ namespace HeatInteractive.SkillTreeGenerator
 {
     /// A skill tree: its nodes, groups and stats (all stored inside this asset), the buy rules, and the stat sums.
     /// Buy rules: the root is always open; any other node opens once a neighbour is owned; then every Requires must be
-    /// owned, every targeted effect needs one of its targets unlocked, and the node's own LockReason must be null.
-    /// Reading stats from game code: var dmg = tree.Stat("Damage"); damage = tree.Get(dmg, baseDamage, ranks, unit).
+    /// owned, and the node's own LockReason must be null.
+    /// Reading stats from game code: var dmg = tree.Stat("Damage"); damage = tree.Get(dmg, baseDamage, ranks).
     /// Derive from it to add tree-wide data (currencies...) or to reword the lock messages.
     [CreateAssetMenu(fileName = "SkillTree", menuName = "Skill Tree Generator/Skill Tree", order = 0)]
     public class SkillTree : ScriptableObject
@@ -139,8 +139,8 @@ namespace HeatInteractive.SkillTreeGenerator
 
         // ---------------------------------------------------------------- stats
 
-        /// The stat's effects summed over the owned ranks, for the target (effects with targets only count for those).
-        public float Sum(SkillStat stat, ISkillRanks ranks, Object target = null)
+        /// The stat's effects summed over the owned ranks.
+        public float Sum(SkillStat stat, ISkillRanks ranks)
         {
             if (stat == null || ranks == null) return 0f;
             Build();
@@ -149,7 +149,7 @@ namespace HeatInteractive.SkillTreeGenerator
             foreach (var (node, effect) in list)
             {
                 int count = ranks.GetRank(node) - Mathf.Max(1, effect.StartRank) + 1;
-                if (count <= 0 || !effect.AppliesTo(target)) continue;
+                if (count <= 0) continue;
                 total += effect.PerRank * count;
             }
             return total;
@@ -157,18 +157,18 @@ namespace HeatInteractive.SkillTreeGenerator
 
         /// The stat's value, by its kind: a percent stat gives a multiplier (+30% -> 1.3, 1 without skills, never below
         /// MinMultiplier), a flat stat the amount to add (0 without skills). No stat: 0.
-        public float Get(SkillStat stat, ISkillRanks ranks, Object target = null)
+        public float Get(SkillStat stat, ISkillRanks ranks)
         {
             if (stat == null) return 0f;
-            float sum = Sum(stat, ranks, target);
+            float sum = Sum(stat, ranks);
             return stat.Kind == SkillStatKind.Percent ? Mathf.Max(MinMultiplier, 1f + sum / 100f) : sum;
         }
 
         /// The base value with the stat applied, by its kind: percent multiplies, flat adds. No stat: the base value.
-        public float Get(SkillStat stat, float baseValue, ISkillRanks ranks, Object target = null)
+        public float Get(SkillStat stat, float baseValue, ISkillRanks ranks)
         {
             if (stat == null) return baseValue;
-            float value = Get(stat, ranks, target);
+            float value = Get(stat, ranks);
             return stat.Kind == SkillStatKind.Percent ? baseValue * value : baseValue + value;
         }
 
@@ -224,27 +224,13 @@ namespace HeatInteractive.SkillTreeGenerator
             return false;
         }
 
-        /// What holds a node back even when it is reachable: a missing Requires, an effect whose targets are all
-        /// locked, then the node's own LockReason.
+        /// What holds a node back even when it is reachable: a missing Requires, then the node's own LockReason.
         public string LockReason(SkillNode node, ISkillRanks ranks)
         {
             if (node == null) return null;
             if (node.Requires != null)
                 foreach (var need in node.Requires)
                     if (need != null && !ranks.IsOwned(need)) return RequirementText(need);
-            foreach (var effect in node.GetEffects())
-            {
-                if (effect == null || !effect.HasTargets) continue;
-                Object first = null;
-                bool open = false;
-                foreach (var target in effect.Targets)
-                {
-                    if (target == null) continue;
-                    first ??= target;
-                    if (IsUnlocked(target, ranks)) { open = true; break; }
-                }
-                if (!open) return TargetLockedText(first);
-            }
             return node.LockReason(this, ranks);
         }
 
@@ -258,7 +244,6 @@ namespace HeatInteractive.SkillTreeGenerator
 
         public virtual string RequirementText(SkillNode need) => $"Requires \"{need.DisplayName}\" first.";
         public virtual string UnreachableText(SkillNode node) => "Own a connected skill first.";
-        public virtual string TargetLockedText(Object target) => $"Unlock \"{SkillTargets.NameOf(target)}\" first.";
         public virtual string MaxRankText(SkillNode node) => "Already at max rank.";
         public virtual string BlockedText(SkillNode node) => "Can't be bought right now.";
         public virtual string CantAffordText(SkillNode node) => "Not enough to pay for it.";

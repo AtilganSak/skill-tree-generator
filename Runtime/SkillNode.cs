@@ -45,7 +45,7 @@ namespace HeatInteractive.SkillTreeGenerator
             yield break;
         }
 
-        /// Why this node can't be bought, on top of Requires, reachability and locked targets. Null = nothing.
+        /// Why this node can't be bought, on top of Requires and reachability. Null = nothing.
         public virtual string LockReason(SkillTree tree, ISkillRanks ranks) => null;
 
         /// One short line of what the node does, drawn under its name in the editor.
@@ -69,17 +69,6 @@ namespace HeatInteractive.SkillTreeGenerator
                         continue;
                     }
                     sb.Append(effect.Stat.DisplayName).Append(' ').Append(effect.Stat.Format(effect.PerRank));
-                    if (!effect.HasTargets) continue;
-                    sb.Append(" (");
-                    int shown = 0;
-                    foreach (var target in effect.Targets)
-                    {
-                        if (target == null) continue;
-                        if (shown == 2) { sb.Append(" +").Append(effect.Targets.Count - 2); break; }
-                        if (shown++ > 0) sb.Append(", ");
-                        sb.Append(SkillTargets.NameOf(target));
-                    }
-                    sb.Append(')');
                 }
                 return sb.Length > 0 ? sb.ToString() : null;
             }

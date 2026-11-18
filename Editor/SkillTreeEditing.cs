@@ -286,7 +286,7 @@ namespace HeatInteractive.SkillTreeGenerator.Editing
         // ---------------------------------------------------------------- stats
 
         public static SkillStat CreateStat(SkillTree tree, string key = null, string displayName = null,
-            SkillStatKind kind = SkillStatKind.Percent, string unit = "", Type targetType = null)
+            SkillStatKind kind = SkillStatKind.Percent, string unit = "")
         {
             var stat = ScriptableObject.CreateInstance<SkillStat>();
             stat.hideFlags = HideFlags.HideInHierarchy;
@@ -295,7 +295,6 @@ namespace HeatInteractive.SkillTreeGenerator.Editing
             stat.Key = key ?? displayName.Replace(" ", "");
             stat.Kind = kind;
             stat.Unit = unit ?? "";
-            stat.TargetType = targetType == null ? "" : TypeKey(targetType);
             SyncName(stat);
             Undo.RecordObject(tree, "Create Stat");
             AssetDatabase.AddObjectToAsset(stat, tree);
@@ -334,9 +333,6 @@ namespace HeatInteractive.SkillTreeGenerator.Editing
 
         public static List<SkillNode> UsersOf(SkillTree tree, SkillStat stat) =>
             tree.Nodes.Where(n => n != null && n.GetEffects().Any(e => e != null && e.Stat == stat)).ToList();
-
-        /// How a target type is stored in SkillStat.TargetType: "Namespace.Type, Assembly".
-        public static string TypeKey(Type type) => $"{type.FullName}, {type.Assembly.GetName().Name}";
 
         // ---------------------------------------------------------------- groups
 

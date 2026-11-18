@@ -8,7 +8,7 @@ namespace HeatInteractive.SkillTreeGenerator
     [SkillNodeMenu("Skill", "Stat effects per rank, and the assets it unlocks.")]
     public class EffectSkill : SkillNode
     {
-        [Tooltip("Assets this skill opens (a unit, an ability...). Until it is owned they stay locked, and skills whose effects target them wait.")]
+        [Tooltip("Assets this skill opens (a unit, an ability...). Until it is owned they stay locked.")]
         public List<Object> Unlocks = new();
         public List<SkillEffect> Effects = new();
 

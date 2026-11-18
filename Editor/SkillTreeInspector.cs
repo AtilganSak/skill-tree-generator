@@ -482,7 +482,7 @@ namespace HeatInteractive.SkillTreeGenerator.Editing
         private void BuildStats()
         {
             var section = Section("Stats",
-                "What skills can raise. Code reads one by its Key: tree.Stat(\"Damage\"), then tree.Get(stat, baseValue, ranks, target).");
+                "What skills can raise. Code reads one by its Key: tree.Stat(\"Damage\"), then tree.Get(stat, baseValue, ranks).");
             var stats = Tree.Stats.Where(s => s != null).OrderBy(s => s.DisplayName).ToList();
 
             if (stats.Count > 6)

@@ -80,8 +80,6 @@ namespace HeatInteractive.SkillTreeGenerator
                 issues.Add(SkillIssue.Error(null, $"Stat \"{stat.DisplayName}\" has no Key, so code can't ask for it."));
             foreach (var group in stats.Where(s => !string.IsNullOrWhiteSpace(s.Key)).GroupBy(s => s.Key.ToLowerInvariant()).Where(g => g.Count() > 1))
                 issues.Add(SkillIssue.Error(null, $"{group.Count()} stats share the Key \"{group.First().Key}\": code would only ever find the first."));
-            foreach (var stat in stats.Where(s => !string.IsNullOrEmpty(s.TargetType) && s.ResolvedTargetType == null))
-                issues.Add(SkillIssue.Warning(null, $"Stat \"{stat.DisplayName}\": target type \"{stat.TargetType}\" no longer exists."));
             if (!string.IsNullOrEmpty(tree.PriceStat) && tree.Stat(tree.PriceStat) == null)
                 issues.Add(SkillIssue.Warning(null, $"Price Stat \"{tree.PriceStat}\" isn't a stat of this tree, so prices aren't scaled."));
         }
@@ -105,13 +103,6 @@ namespace HeatInteractive.SkillTreeGenerator
                 if (!tree.Stats.Contains(effect.Stat)) issues.Add(SkillIssue.Error(node, $"Uses stat \"{stat}\" from another tree."));
                 if (effect.PerRank == 0f) issues.Add(SkillIssue.Warning(node, $"{stat} adds 0 per rank."));
                 if (effect.StartRank > node.MaxRank) issues.Add(SkillIssue.Warning(node, $"{stat} starts at rank {effect.StartRank}, past the max rank."));
-                if (!effect.HasTargets) continue;
-
-                foreach (var target in effect.Targets.Where(t => t != null && !effect.Stat.Accepts(t)))
-                    issues.Add(SkillIssue.Error(node, $"{stat} only applies to {effect.Stat.ResolvedTargetType?.Name}, and {SkillTargets.NameOf(target)} isn't one."));
-                bool anyCanOpen = effect.Targets.Any(t => t != null && (tree.IsGated(t) || SkillTargets.UnlockedByDefault(t)));
-                if (!anyCanOpen)
-                    issues.Add(SkillIssue.Error(node, $"{stat} targets only things that start locked and no skill unlocks, so it never applies."));
             }
         }
 

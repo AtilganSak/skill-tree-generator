@@ -7,7 +7,7 @@ namespace HeatInteractive.SkillTreeGenerator
 {
     /// A player in a tree: their ranks, stat reads, unlocks, and buying with the game's ISkillWallet. The game only
     /// says where the money is, saves on Changed, and sets Current so gameplay can ask from anywhere.
-    /// Reading a stat: Get("Key", baseValue, scope). A percent stat multiplies the base, a flat one adds to it: pass 1
+    /// Reading a stat: Get("Key", baseValue). A percent stat multiplies the base, a flat one adds to it: pass 1
     /// for a multiplier, 0 for an amount. A Key the tree doesn't have leaves the base as it is (warned once: a typo).
     /// A null tree (not loaded, missing) is a progress with nothing in it: no stat changes anything, nothing is sold.
     public class SkillBook : ISkillRanks
@@ -68,12 +68,11 @@ namespace HeatInteractive.SkillTreeGenerator
             return stat;
         }
 
-        /// The base value with the stat applied: percent multiplies, flat adds. scope = the asset asking (effects with
-        /// targets only count for those). No tree, or no such stat: the base value.
-        public float Get(string stat, float baseValue, Object scope = null)
+        /// The base value with the stat applied: percent multiplies, flat adds. No tree, or no such stat: the base value.
+        public float Get(string stat, float baseValue)
         {
             var s = StatOf(stat);
-            return s == null ? baseValue : Tree.Get(s, baseValue, Ranks, scope);
+            return s == null ? baseValue : Tree.Get(s, baseValue, Ranks);
         }
 
         /// The asset an owned effect of this stat carries (SkillEffect.Payload), or null.
@@ -91,7 +90,7 @@ namespace HeatInteractive.SkillTreeGenerator
         /// The root, or a node with an owned neighbour.
         public bool IsReachable(SkillNode node) => Tree != null && Tree.IsReachable(node, Ranks);
 
-        /// Why a reachable node is still held back (a Requires, locked targets, the node's own rule), null = nothing.
+        /// Why a reachable node is still held back (a Requires, the node's own rule), null = nothing.
         public string LockReason(SkillNode node) => Tree != null ? Tree.LockReason(node, Ranks) : null;
 
         /// Reachable and nothing holds it back; says nothing about max rank, the wallet or the price (see WhyNot).
@@ -129,8 +128,8 @@ namespace HeatInteractive.SkillTreeGenerator
             return true;
         }
 
-        /// Why the next rank can't be bought, null = it can: max rank, the tree's rules (reachable, Requires, locked
-        /// targets), the wallet's CanBuy, then the price.
+        /// Why the next rank can't be bought, null = it can: max rank, the tree's rules (reachable, Requires), the
+        /// wallet's CanBuy, then the price.
         public string WhyNot(SkillNode node)
         {
             if (node == null || Tree == null || Wallet == null) return "Skills are off.";
