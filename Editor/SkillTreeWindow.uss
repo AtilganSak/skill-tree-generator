@@ -1,0 +1,775 @@
+/* ------------------------------------------------------------ window */
+
+.skill-window {
+    flex-grow: 1;
+}
+
+.main {
+    flex-grow: 1;
+}
+
+/* ------------------------------------------------------------ toolbar */
+
+.toolbar__tree {
+    width: 210px;
+    margin-left: 4px;
+    margin-right: 2px;
+}
+
+.toolbar__search {
+    width: 180px;
+    margin-left: 6px;
+}
+
+.toolbar__flex {
+    flex-grow: 1;
+}
+
+.toolbar__add {
+    -unity-font-style: bold;
+}
+
+.toolbar__simulate:checked {
+    background-color: rgba(255, 170, 40, 0.35);
+}
+
+.toolbar__issues {
+    min-width: 86px;
+    -unity-text-align: middle-center;
+    color: rgb(120, 210, 130);
+}
+
+.toolbar__issues--error {
+    color: rgb(255, 110, 100);
+    -unity-font-style: bold;
+}
+
+.toolbar__issues--warning {
+    color: rgb(255, 200, 90);
+}
+
+/* ------------------------------------------------------------ status bar */
+
+.status-bar {
+    flex-direction: row;
+    height: 20px;
+    padding-left: 8px;
+    padding-right: 8px;
+    align-items: center;
+    border-top-width: 1px;
+    border-top-color: rgba(0, 0, 0, 0.35);
+    background-color: rgba(127, 127, 127, 0.08);
+}
+
+.status-bar__hint {
+    flex-grow: 1;
+    flex-shrink: 1;
+    overflow: hidden;
+    font-size: 11px;
+    opacity: 0.75;
+}
+
+.status-bar__zoom {
+    font-size: 11px;
+    opacity: 0.6;
+    min-width: 40px;
+    -unity-text-align: middle-right;
+}
+
+/* ------------------------------------------------------------ canvas */
+
+.canvas-host {
+    flex-grow: 1;
+    min-width: 200px;
+}
+
+.canvas {
+    flex-grow: 1;
+    overflow: hidden;
+    background-color: rgb(28, 29, 33);
+}
+
+.canvas:focus {
+    border-width: 0;
+}
+
+.canvas--simulating {
+    background-color: rgb(32, 29, 25);
+}
+
+.canvas__background,
+.canvas__overlay {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+}
+
+.canvas__content {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 0;
+    height: 0;
+}
+
+.sim-banner {
+    display: none;
+    position: absolute;
+    top: 10px;
+    left: 50%;
+    translate: -50% 0;
+    padding: 4px 12px;
+    border-radius: 10px;
+    background-color: rgba(255, 170, 40, 0.9);
+    color: rgb(30, 22, 10);
+    font-size: 11px;
+    -unity-font-style: bold;
+    -unity-text-align: middle-center;
+}
+
+.no-types {
+    display: none;
+    position: absolute;
+    top: 40%;
+    left: 0;
+    right: 0;
+    -unity-text-align: middle-center;
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 13px;
+    white-space: normal;
+}
+
+/* ------------------------------------------------------------ skill node */
+
+.skill-node {
+    position: absolute;
+    width: 64px;
+    height: 64px;
+    translate: -50% -50%;
+}
+
+.skill-node--root {
+    width: 84px;
+    height: 84px;
+}
+
+.skill-node__circle {
+    flex-grow: 1;
+    border-radius: 50%;
+    border-width: 3px;
+    align-items: center;
+    justify-content: center;
+    transition-duration: 0.08s;
+}
+
+.skill-node:hover .skill-node__circle {
+    scale: 1.06 1.06;
+}
+
+.skill-node__icon {
+    width: 60%;
+    height: 60%;
+}
+
+.skill-node__initials {
+    color: rgba(255, 255, 255, 0.92);
+    font-size: 17px;
+    -unity-font-style: bold;
+    -unity-text-align: middle-center;
+}
+
+.skill-node--root .skill-node__initials {
+    font-size: 22px;
+}
+
+.skill-node__accent,
+.skill-node__selection {
+    position: absolute;
+    left: -7px;
+    top: -7px;
+    right: -7px;
+    bottom: -7px;
+    border-radius: 50%;
+    border-width: 2px;
+}
+
+.skill-node__selection {
+    left: -5px;
+    top: -5px;
+    right: -5px;
+    bottom: -5px;
+    border-width: 0;
+    border-color: rgb(255, 255, 255);
+}
+
+.skill-node--selected .skill-node__selection {
+    border-width: 3px;
+}
+
+.skill-node--selected .skill-node__accent {
+    left: -11px;
+    top: -11px;
+    right: -11px;
+    bottom: -11px;
+}
+
+.skill-node--target .skill-node__selection {
+    border-width: 3px;
+    border-color: rgb(80, 215, 255);
+}
+
+.skill-node__rank {
+    position: absolute;
+    bottom: -9px;
+    align-self: center;
+    padding: 0 6px;
+    border-radius: 8px;
+    background-color: rgb(20, 21, 24);
+    border-width: 1px;
+    border-color: rgba(255, 255, 255, 0.25);
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 10px;
+    -unity-font-style: bold;
+}
+
+.skill-node__badge {
+    display: none;
+    position: absolute;
+    left: -4px;
+    top: -4px;
+    width: 18px;
+    height: 18px;
+    border-radius: 9px;
+    background-color: rgb(240, 175, 40);
+    border-width: 2px;
+    border-color: rgb(28, 29, 33);
+    align-items: center;
+    justify-content: center;
+}
+
+.skill-node__badge--error {
+    background-color: rgb(230, 70, 60);
+}
+
+.skill-node__badge-text {
+    color: rgb(20, 20, 20);
+    font-size: 11px;
+    -unity-font-style: bold;
+    -unity-text-align: middle-center;
+    padding: 0;
+    margin: 0;
+}
+
+.skill-node__port {
+    display: none;
+    position: absolute;
+    right: -8px;
+    top: -8px;
+    width: 22px;
+    height: 22px;
+    border-radius: 11px;
+    background-color: rgb(80, 200, 255);
+    border-width: 2px;
+    border-color: rgb(28, 29, 33);
+    align-items: center;
+    justify-content: center;
+}
+
+.skill-node:hover .skill-node__port {
+    display: flex;
+}
+
+.skill-node__port:hover {
+    background-color: rgb(150, 230, 255);
+    scale: 1.15 1.15;
+}
+
+.skill-node__port-text {
+    color: rgb(15, 30, 40);
+    font-size: 15px;
+    -unity-font-style: bold;
+    -unity-text-align: middle-center;
+    padding: 0;
+    margin: 0;
+    margin-top: -2px;
+}
+
+.canvas--simulating .skill-node__port {
+    display: none;
+}
+
+.skill-node__label {
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    width: 170px;
+    translate: -50% 0;
+    margin-top: 12px;
+    align-items: center;
+}
+
+.skill-node__title {
+    color: rgba(255, 255, 255, 0.95);
+    font-size: 12px;
+    -unity-font-style: bold;
+    -unity-text-align: upper-center;
+    white-space: normal;
+    padding: 0;
+    margin: 0;
+}
+
+.skill-node__summary {
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 10px;
+    -unity-text-align: upper-center;
+    white-space: normal;
+    padding: 0;
+    margin: 1px 0 0 0;
+}
+
+.canvas--far .skill-node__label {
+    display: none;
+}
+
+.skill-node--dimmed {
+    opacity: 0.18;
+}
+
+/* simulation */
+
+.sim-locked {
+    opacity: 0.35;
+}
+
+.sim-available .skill-node__selection {
+    border-width: 2px;
+    border-color: rgb(255, 200, 60);
+}
+
+.sim-available.skill-node--selected .skill-node__selection,
+.sim-owned.skill-node--selected .skill-node__selection,
+.sim-maxed.skill-node--selected .skill-node__selection {
+    border-width: 3px;
+    border-color: rgb(255, 255, 255);
+}
+
+.sim-owned .skill-node__circle {
+    border-width: 4px;
+}
+
+.sim-owned .skill-node__selection {
+    border-width: 3px;
+    border-color: rgb(110, 220, 120);
+}
+
+.sim-owned .skill-node__rank {
+    background-color: rgb(60, 150, 80);
+    border-color: rgba(255, 255, 255, 0.4);
+}
+
+.sim-maxed .skill-node__rank {
+    background-color: rgb(210, 160, 40);
+    color: rgb(30, 20, 5);
+}
+
+/* ------------------------------------------------------------ empty state */
+
+.empty {
+    flex-grow: 1;
+    align-items: center;
+    justify-content: center;
+    display: none;
+}
+
+.empty__card {
+    width: 380px;
+    padding: 20px;
+    border-radius: 6px;
+    background-color: rgba(127, 127, 127, 0.1);
+}
+
+.empty__title {
+    font-size: 18px;
+    -unity-font-style: bold;
+    margin-bottom: 6px;
+}
+
+.empty__text {
+    white-space: normal;
+    opacity: 0.75;
+    margin-bottom: 12px;
+}
+
+.empty__list {
+    margin-top: 12px;
+}
+
+.empty__tree {
+    -unity-text-align: middle-left;
+    margin: 1px 0;
+}
+
+/* ------------------------------------------------------------ inspector */
+
+.inspector {
+    min-width: 260px;
+    border-left-width: 1px;
+    border-left-color: rgba(0, 0, 0, 0.35);
+}
+
+.inspector__scroll {
+    flex-grow: 1;
+}
+
+.header {
+    flex-direction: row;
+    padding: 10px 10px 8px 0;
+    background-color: rgba(127, 127, 127, 0.1);
+    border-bottom-width: 1px;
+    border-bottom-color: rgba(0, 0, 0, 0.25);
+}
+
+.header__strip {
+    width: 5px;
+    margin-right: 10px;
+    border-top-right-radius: 3px;
+    border-bottom-right-radius: 3px;
+}
+
+.header__texts {
+    flex-grow: 1;
+    flex-shrink: 1;
+}
+
+.header__title {
+    font-size: 16px;
+    -unity-font-style: bold;
+    white-space: normal;
+}
+
+.header__subtitle {
+    font-size: 11px;
+    opacity: 0.65;
+    margin-top: 2px;
+    white-space: normal;
+}
+
+.header__badges {
+    flex-direction: row;
+    align-items: flex-start;
+}
+
+.badge {
+    padding: 1px 6px;
+    border-radius: 8px;
+    font-size: 10px;
+    -unity-font-style: bold;
+}
+
+.badge--root {
+    background-color: rgb(80, 200, 255);
+    color: rgb(15, 30, 40);
+}
+
+.section {
+    padding: 8px 10px 10px 10px;
+    border-bottom-width: 1px;
+    border-bottom-color: rgba(0, 0, 0, 0.18);
+}
+
+.section__title {
+    font-size: 11px;
+    -unity-font-style: bold;
+    opacity: 0.6;
+    margin-bottom: 6px;
+    letter-spacing: 1px;
+}
+
+.section__help {
+    font-size: 11px;
+    opacity: 0.6;
+    white-space: normal;
+    margin-bottom: 6px;
+}
+
+.section--simulation {
+    background-color: rgba(255, 170, 40, 0.1);
+}
+
+.sub-title {
+    font-size: 11px;
+    -unity-font-style: bold;
+    opacity: 0.75;
+    margin-top: 6px;
+    margin-bottom: 3px;
+}
+
+.hint {
+    font-size: 11px;
+    opacity: 0.6;
+    white-space: normal;
+    margin: 2px 0;
+}
+
+.row {
+    flex-direction: row;
+    flex-wrap: wrap;
+    margin-top: 6px;
+}
+
+.action {
+    height: 22px;
+    margin: 2px 4px 2px 0;
+    padding: 0 10px;
+}
+
+.action--primary {
+    background-color: rgb(45, 110, 200);
+    color: rgb(255, 255, 255);
+}
+
+.action--primary:hover {
+    background-color: rgb(60, 130, 225);
+}
+
+.action--danger {
+    color: rgb(255, 120, 110);
+}
+
+.sim-status {
+    white-space: normal;
+    margin-bottom: 4px;
+}
+
+/* chips */
+
+.chips {
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+
+.chip {
+    flex-direction: row;
+    align-items: center;
+    height: 22px;
+    margin: 2px 4px 2px 0;
+    padding-left: 7px;
+    padding-right: 3px;
+    border-radius: 11px;
+    background-color: rgba(127, 127, 127, 0.2);
+}
+
+.chip:hover {
+    background-color: rgba(127, 127, 127, 0.35);
+}
+
+.chip__dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 4px;
+    margin-right: 5px;
+}
+
+.chip__name {
+    font-size: 11px;
+    padding: 0;
+    margin: 0 4px 0 0;
+}
+
+.chip__remove {
+    width: 16px;
+    height: 16px;
+    padding: 0;
+    margin: 0;
+    border-radius: 8px;
+    border-width: 0;
+    background-color: rgba(0, 0, 0, 0);
+    font-size: 12px;
+    -unity-text-align: middle-center;
+}
+
+.chip__remove:hover {
+    background-color: rgba(230, 70, 60, 0.8);
+    color: rgb(255, 255, 255);
+}
+
+/* issues */
+
+.issues {
+    padding: 0;
+}
+
+.issue {
+    flex-direction: row;
+    align-items: flex-start;
+    padding: 4px 6px;
+    margin: 2px 0;
+    border-radius: 3px;
+    border-left-width: 3px;
+}
+
+.issue--error {
+    background-color: rgba(230, 70, 60, 0.14);
+    border-left-color: rgb(230, 70, 60);
+}
+
+.issue--warning {
+    background-color: rgba(240, 175, 40, 0.12);
+    border-left-color: rgb(240, 175, 40);
+}
+
+.issue--clickable:hover {
+    background-color: rgba(127, 127, 127, 0.25);
+}
+
+.issue__icon {
+    width: 16px;
+    font-size: 10px;
+    margin-top: 1px;
+}
+
+.issue--error .issue__icon {
+    color: rgb(255, 110, 100);
+}
+
+.issue--warning .issue__icon {
+    color: rgb(255, 200, 90);
+}
+
+.issue__text {
+    flex-grow: 1;
+    flex-shrink: 1;
+    white-space: normal;
+    font-size: 11px;
+}
+
+.issues__ok {
+    color: rgb(120, 210, 130);
+}
+
+/* groups */
+
+.group-row {
+    flex-direction: row;
+    align-items: center;
+    margin: 2px 0;
+}
+
+.group-row__color {
+    width: 46px;
+    margin: 0 4px 0 0;
+}
+
+.group-row__name {
+    flex-grow: 1;
+    flex-shrink: 1;
+    margin: 0;
+}
+
+.group-row__count {
+    min-width: 28px;
+    -unity-text-align: middle-center;
+    opacity: 0.6;
+    font-size: 11px;
+}
+
+.group-row__count:hover {
+    opacity: 1;
+}
+
+.group-row__delete {
+    width: 20px;
+    padding: 0;
+    margin: 0 0 0 2px;
+}
+
+.group-field {
+    flex-direction: row;
+    align-items: center;
+}
+
+.group-field__dropdown {
+    flex-grow: 1;
+    flex-shrink: 1;
+}
+
+.group-field__swatch {
+    width: 14px;
+    height: 14px;
+    border-radius: 7px;
+    margin-left: 4px;
+}
+
+/* help */
+
+.help-row {
+    flex-direction: row;
+    margin: 2px 0;
+}
+
+.help-row__key {
+    width: 45%;
+    font-size: 11px;
+    -unity-font-style: bold;
+    white-space: normal;
+}
+
+.help-row__what {
+    flex-grow: 1;
+    flex-shrink: 1;
+    font-size: 11px;
+    opacity: 0.8;
+    white-space: normal;
+}
+
+/* light editor theme: the canvas stays dark, the panels follow the editor */
+
+.skill-window--light .action--danger {
+    color: rgb(190, 40, 30);
+}
+
+.skill-window--light .issues__ok,
+.skill-window--light .toolbar__issues {
+    color: rgb(30, 130, 50);
+}
+
+/* effects and stats */
+
+.effect {
+    padding: 4px 4px 2px 0;
+}
+
+.effect__amount {
+    flex-direction: row;
+    align-items: center;
+}
+
+.effect__per-rank {
+    flex-grow: 1;
+    flex-shrink: 1;
+}
+
+.effect__unit {
+    min-width: 70px;
+    font-size: 11px;
+    opacity: 0.65;
+    margin-left: 4px;
+}
+
+.effect__more {
+    margin-left: 0;
+}
+
+.stat-filter {
+    width: auto;
+    margin: 0 0 4px 0;
+}
+
+.stat {
+    margin: 1px 0;
+    padding: 2px 4px;
+    border-radius: 3px;
+    background-color: rgba(127, 127, 127, 0.08);
+}

@@ -1,0 +1,6 @@
+{
+    "name": "AtilganSak.Skills.UI",
+    "rootNamespace": "AtilganSak.Skills.UI",
+    "references": ["AtilganSak.Skills", "Unity.TextMeshPro", "UnityEngine.UI"],
+    "autoReferenced": true
+}
