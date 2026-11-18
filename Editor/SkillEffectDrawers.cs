@@ -82,7 +82,6 @@ namespace HeatInteractive.SkillTreeGenerator.Editing
             var more = new Foldout { text = "More", value = false };
             more.AddToClassList("effect__more");
             more.Add(new PropertyField(property.FindPropertyRelative(nameof(SkillEffect.StartRank))));
-            more.Add(new PropertyField(property.FindPropertyRelative(nameof(SkillEffect.Payload))));
             root.Add(more);
 
             void Paint()

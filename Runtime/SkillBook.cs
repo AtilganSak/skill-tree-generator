@@ -75,9 +75,6 @@ namespace HeatInteractive.SkillTreeGenerator
             return s == null ? baseValue : Tree.Get(s, baseValue, Ranks);
         }
 
-        /// The asset an owned effect of this stat carries (SkillEffect.Payload), or null.
-        public Object PayloadOf(string stat) => Tree != null ? Tree.PayloadOf(StatOf(stat), Ranks) : null;
-
         /// Some node unlocks this asset, so it stays locked until one is owned.
         public bool IsGated(Object target) => Tree != null && Tree.IsGated(target);
 

@@ -13,9 +13,6 @@ namespace HeatInteractive.SkillTreeGenerator
         public float PerRank = 10f;
         [Min(1), Tooltip("The effect starts at this rank (e.g. 2 = rank 1 does nothing for this effect).")]
         public int StartRank = 1;
-        [Tooltip("An asset the effect carries, read by code with tree.PayloadOf (e.g. which turret a 'base turret' skill builds). Usually empty.")]
-        public Object Payload;
-
     }
 
     /// Lets your assets tell the skill tree their name and whether they start unlocked (both optional).

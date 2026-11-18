@@ -172,17 +172,6 @@ namespace HeatInteractive.SkillTreeGenerator
             return stat.Kind == SkillStatKind.Percent ? baseValue * value : baseValue + value;
         }
 
-        /// The Payload of the first owned effect of the stat (e.g. which turret a "base turret" skill builds).
-        public Object PayloadOf(SkillStat stat, ISkillRanks ranks)
-        {
-            if (stat == null) return null;
-            Build();
-            if (!_byStat.TryGetValue(stat, out var list)) return null;
-            foreach (var (node, effect) in list)
-                if (effect.Payload != null && ranks.GetRank(node) >= Mathf.Max(1, effect.StartRank)) return effect.Payload;
-            return null;
-        }
-
         // ---------------------------------------------------------------- unlocks
 
         /// Some node unlocks it: it stays locked until one of those is owned.
