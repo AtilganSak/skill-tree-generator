@@ -99,7 +99,7 @@ namespace HeatInteractive.SkillTreeGenerator
                 }
                 string stat = effect.Stat.DisplayName;
                 if (!tree.Stats.Contains(effect.Stat)) issues.Add(SkillIssue.Error(node, $"Uses stat \"{stat}\" from another tree."));
-                if (effect.PerRank == 0f) issues.Add(SkillIssue.Warning(node, $"{stat} adds 0 per rank."));
+                if (effect.Stat.Kind != SkillStatKind.Flag && effect.PerRank == 0f) issues.Add(SkillIssue.Warning(node, $"{stat} adds 0 per rank."));
                 if (effect.StartRank > node.MaxRank) issues.Add(SkillIssue.Warning(node, $"{stat} starts at rank {effect.StartRank}, past the max rank."));
             }
         }

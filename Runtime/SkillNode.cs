@@ -31,7 +31,7 @@ namespace HeatInteractive.SkillTreeGenerator
         [Tooltip("All of these must be owned before this node can be bought, linked or not.")]
         [HideInInspector] public List<SkillNode> Requires = new();
 
-        /// What the node adds per rank. The tree sums these for tree.Get.
+        /// What the node adds per rank. The tree sums these for GetStat.
         public virtual IEnumerable<SkillEffect> GetEffects()
         {
             yield break;
@@ -55,7 +55,8 @@ namespace HeatInteractive.SkillTreeGenerator
                         sb.Append("(no stat)");
                         continue;
                     }
-                    sb.Append(effect.Stat.DisplayName).Append(' ').Append(effect.Stat.Format(effect.PerRank));
+                    sb.Append(effect.Stat.DisplayName);
+                    if (effect.Stat.Kind != SkillStatKind.Flag) sb.Append(' ').Append(effect.Stat.Format(effect.PerRank));
                 }
                 return sb.Length > 0 ? sb.ToString() : null;
             }

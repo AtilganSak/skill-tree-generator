@@ -53,7 +53,7 @@ namespace HeatInteractive.SkillTreeGenerator.Editing
             return dropdown;
         }
 
-        private static string Label(SkillStat s) => $"{s.DisplayName}  ({(s.Kind == SkillStatKind.Percent ? "%" : string.IsNullOrEmpty(s.Unit) ? "flat" : s.Unit)})";
+        private static string Label(SkillStat s) => $"{s.DisplayName}  ({(s.Kind == SkillStatKind.Flag ? "flag" : s.Kind == SkillStatKind.Percent ? "%" : string.IsNullOrEmpty(s.Unit) ? "flat" : s.Unit)})";
     }
 
     /// One effect: the stat, how much per rank (with its unit), and the start rank.
@@ -84,6 +84,7 @@ namespace HeatInteractive.SkillTreeGenerator.Editing
             void Paint()
             {
                 var s = statProp.objectReferenceValue as SkillStat;
+                amountRow.style.display = s != null && s.Kind == SkillStatKind.Flag ? DisplayStyle.None : DisplayStyle.Flex;
                 unit.text = s == null ? "" : s.Kind == SkillStatKind.Percent ? "% per rank" : (string.IsNullOrEmpty(s.Unit) ? "" : s.Unit + " ") + "per rank";
             }
 

@@ -7,8 +7,9 @@ namespace HeatInteractive.SkillTreeGenerator
 {
     /// A player in a tree: their ranks, stat reads, and buying with the game's ISkillWallet. The game only
     /// says where the money is, saves on Changed, and sets Current so gameplay can ask from anywhere.
-    /// Reading a stat: Get("Key", baseValue). A percent stat multiplies the base, a flat one adds to it: pass 1
-    /// for a multiplier, 0 for an amount. A Key the tree doesn't have leaves the base as it is (warned once: a typo).
+    /// Reading a stat: GetStat("Key", baseValue). A percent stat multiplies the base, a flat one adds to it: pass 1
+    /// for a multiplier, 0 for an amount; a flag stat reads as bool: GetStat("Key", false). A Key the tree doesn't
+    /// have leaves the base as it is (warned once: a typo).
     /// A null tree (not loaded, missing) is a progress with nothing in it: no stat changes anything, nothing is sold.
     public class SkillBook : ISkillRanks
     {
@@ -68,11 +69,13 @@ namespace HeatInteractive.SkillTreeGenerator
             return stat;
         }
 
-        /// The base value with the stat applied: percent multiplies, flat adds. No tree, or no such stat: the base value.
-        public float Get(string stat, float baseValue)
+        /// The stat with the base value applied, as float, int or bool: percent multiplies, flat adds, a flag is a bool
+        /// (on when a skill of it is active). The type comes from the base: GetStat("Damage", 10f), GetStat("Turret2", false).
+        /// No tree, or no such stat: the base value.
+        public T GetStat<T>(string stat, T baseValue)
         {
             var s = StatOf(stat);
-            return s == null ? baseValue : Tree.Get(s, baseValue, Ranks);
+            return s == null ? baseValue : Tree.GetStat(s, baseValue, Ranks);
         }
 
         // ---------------------------------------------------------------- rules
@@ -97,7 +100,7 @@ namespace HeatInteractive.SkillTreeGenerator
             var price = new List<SkillCost>();
             if (node == null || node.Cost == null) return price;
             float scale = Mathf.Pow(Mathf.Max(1f, node.CostGrowth), rank);
-            if (Tree != null) scale = Tree.Get(Tree.Stat(Tree.PriceStat), scale, Ranks);
+            if (Tree != null) scale = Tree.GetStat(Tree.Stat(Tree.PriceStat), scale, Ranks);
             foreach (var cost in node.Cost)
                 if (cost.Currency != null && cost.Amount > 0)
                     price.Add(new SkillCost { Currency = cost.Currency, Amount = Mathf.Max(1, Mathf.CeilToInt(cost.Amount * scale)) });

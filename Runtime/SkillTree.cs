@@ -8,7 +8,7 @@ namespace HeatInteractive.SkillTreeGenerator
     /// A skill tree: its nodes, groups and stats (all stored inside this asset), the buy rules, and the stat sums.
     /// Buy rules: the root is always open; any other node opens once a neighbour is owned; then every Requires must be
     /// owned, and the node's own LockReason must be null.
-    /// Reading stats from game code: var dmg = tree.Stat("Damage"); damage = tree.Get(dmg, baseDamage, ranks).
+    /// Reading stats from game code: var dmg = tree.Stat("Damage"); damage = tree.GetStat(dmg, baseDamage, ranks).
     /// Derive from it to add tree-wide data (currencies...) or to reword the lock messages.
     [CreateAssetMenu(fileName = "SkillTree", menuName = "Skill Tree Generator/Skill Tree", order = 0)]
     public class SkillTree : ScriptableObject
@@ -131,7 +131,7 @@ namespace HeatInteractive.SkillTreeGenerator
 
         // ---------------------------------------------------------------- stats
 
-        /// The stat's effects summed over the owned ranks.
+        /// The stat's effects summed over the owned ranks. A flag is 1 when any of its effects is active, else 0.
         public float Sum(SkillStat stat, ISkillRanks ranks)
         {
             if (stat == null || ranks == null) return 0f;
@@ -142,26 +142,34 @@ namespace HeatInteractive.SkillTreeGenerator
             {
                 int count = ranks.GetRank(node) - Mathf.Max(1, effect.StartRank) + 1;
                 if (count <= 0) continue;
+                if (stat.Kind == SkillStatKind.Flag) return 1f;
                 total += effect.PerRank * count;
             }
             return total;
         }
 
-        /// The stat's value, by its kind: a percent stat gives a multiplier (+30% -> 1.3, 1 without skills, never below
-        /// MinMultiplier), a flat stat the amount to add (0 without skills). No stat: 0.
-        public float Get(SkillStat stat, ISkillRanks ranks)
-        {
-            if (stat == null) return 0f;
-            float sum = Sum(stat, ranks);
-            return stat.Kind == SkillStatKind.Percent ? Mathf.Max(MinMultiplier, 1f + sum / 100f) : sum;
-        }
-
-        /// The base value with the stat applied, by its kind: percent multiplies, flat adds. No stat: the base value.
-        public float Get(SkillStat stat, float baseValue, ISkillRanks ranks)
+        /// The stat with the base value applied, as float, int or bool (nothing else). Percent multiplies the base
+        /// (+30% -> x1.3, never below MinMultiplier), flat adds to it (int rounds); pass 1 or 0 to get the bare
+        /// multiplier or amount. A flag reads as bool: on when an effect of it is active, else the base. A kind that
+        /// doesn't match T warns and gives the base. No stat: the base.
+        public T GetStat<T>(SkillStat stat, T baseValue, ISkillRanks ranks)
         {
             if (stat == null) return baseValue;
-            float value = Get(stat, ranks);
-            return stat.Kind == SkillStatKind.Percent ? baseValue * value : baseValue + value;
+            bool flag = stat.Kind == SkillStatKind.Flag;
+            var toFloat = StatValue<T>.ToFloat;
+            if (toFloat == null || flag != StatValue<T>.IsBool) return Mismatch(stat, baseValue);
+
+            float b = toFloat(baseValue);
+            float sum = Sum(stat, ranks);
+            float value = flag ? (sum > 0f || b > 0f ? 1f : 0f)
+                : stat.Kind == SkillStatKind.Percent ? b * Mathf.Max(MinMultiplier, 1f + sum / 100f) : b + sum;
+            return StatValue<T>.FromFloat(value);
+        }
+
+        private static T Mismatch<T>(SkillStat stat, T baseValue)
+        {
+            Debug.LogWarning($"Skills: stat \"{stat.Key}\" is a {stat.Kind} stat and can't be read as {typeof(T).Name} (use float or int, bool for flags).");
+            return baseValue;
         }
 
         // ---------------------------------------------------------------- rules
@@ -232,5 +240,33 @@ namespace HeatInteractive.SkillTreeGenerator
         public bool Snap = true;
         public bool ShowRings = true;
         [Min(10f)] public float RingSpacing = 240f;
+    }
+
+    /// float, int and bool as floats (bool = 0/1) and back, for SkillTree.GetStat<T>. Delegates cached per T: no boxing.
+    internal static class StatValue<T>
+    {
+        public static readonly Func<T, float> ToFloat;
+        public static readonly Func<float, T> FromFloat;
+        public static readonly bool IsBool;
+
+        static StatValue()
+        {
+            if (typeof(T) == typeof(float))
+            {
+                ToFloat = (Func<T, float>)(object)(Func<float, float>)(v => v);
+                FromFloat = (Func<float, T>)(object)(Func<float, float>)(v => v);
+            }
+            else if (typeof(T) == typeof(int))
+            {
+                ToFloat = (Func<T, float>)(object)(Func<int, float>)(v => v);
+                FromFloat = (Func<float, T>)(object)(Func<float, int>)Mathf.RoundToInt;
+            }
+            else if (typeof(T) == typeof(bool))
+            {
+                IsBool = true;
+                ToFloat = (Func<T, float>)(object)(Func<bool, float>)(v => v ? 1f : 0f);
+                FromFloat = (Func<float, T>)(object)(Func<float, bool>)(v => v > 0f);
+            }
+        }
     }
 }

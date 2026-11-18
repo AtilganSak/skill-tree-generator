@@ -482,7 +482,7 @@ namespace HeatInteractive.SkillTreeGenerator.Editing
         private void BuildStats()
         {
             var section = Section("Stats",
-                "What skills can raise. Code reads one by its Key: tree.Stat(\"Damage\"), then tree.Get(stat, baseValue, ranks).");
+                "What skills can raise. Code reads one by its Key: tree.Stat(\"Damage\"), then tree.GetStat(stat, baseValue, ranks).");
             var stats = Tree.Stats.Where(s => s != null).OrderBy(s => s.DisplayName).ToList();
 
             if (stats.Count > 6)
@@ -505,21 +505,26 @@ namespace HeatInteractive.SkillTreeGenerator.Editing
                 var foldout = new Foldout { value = s == _expandStat, userData = s };
                 foldout.AddToClassList("stat");
                 foldout.style.display = Show(s) ? DisplayStyle.Flex : DisplayStyle.None;
-                void Title() => foldout.text = $"{s.DisplayName}   <color=#888>{(s.Kind == SkillStatKind.Percent ? "%" : "flat")} · {s.Key} · {users.Count} use{(users.Count == 1 ? "" : "s")}</color>";
+                void Title() => foldout.text = $"{s.DisplayName}   <color=#888>{(s.Kind == SkillStatKind.Percent ? "%" : s.Kind == SkillStatKind.Flag ? "flag" : "flat")} · {s.Key} · {users.Count} use{(users.Count == 1 ? "" : "s")}</color>";
                 Title();
 
                 var so = new SerializedObject(s);
+                VisualElement unitField = null;
                 for (var it = so.GetIterator(); it.NextVisible(it.propertyPath == ""); )
                 {
                     if (it.propertyPath == "m_Script") continue;
                     var field = new PropertyField(it.Copy());
                     field.Bind(so);
                     foldout.Add(field);
+                    if (it.propertyPath == nameof(SkillStat.Unit)) unitField = field;
                 }
+                void ShowUnit() { if (unitField != null) unitField.style.display = s.Kind == SkillStatKind.Flag ? DisplayStyle.None : DisplayStyle.Flex; }
+                ShowUnit();
                 foldout.TrackSerializedObjectValue(so, _ =>
                 {
                     SkillTreeEditing.SyncName(s);
                     Title();
+                    ShowUnit();
                     _window.OnStatsEdited(false);
                 });
 
