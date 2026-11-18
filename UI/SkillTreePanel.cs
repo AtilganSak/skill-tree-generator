@@ -5,7 +5,7 @@ using UnityEngine.Events;
 using UnityEngine.UI;
 using Object = UnityEngine.Object;
 
-namespace AtilganSak.Skills.UI
+namespace HeatInteractive.SkillTreeGenerator.UI
 {
     public enum SkillReveal
     {

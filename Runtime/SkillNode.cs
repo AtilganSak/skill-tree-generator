@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
 
-namespace AtilganSak.Skills
+namespace HeatInteractive.SkillTreeGenerator
 {
     /// One node of a SkillTree. EffectSkill is the ready-made one (stat effects + unlocks); derive from SkillNode or
     /// EffectSkill for your own node types: every serialized field you add shows up in the Skill Tree Editor's

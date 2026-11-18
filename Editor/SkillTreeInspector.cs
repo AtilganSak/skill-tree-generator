@@ -6,7 +6,7 @@ using UnityEditor.UIElements;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-namespace AtilganSak.Skills.Editing
+namespace HeatInteractive.SkillTreeGenerator.Editing
 {
     /// The right panel. Nothing picked: the tree (issues, groups, settings, help). One skill: its fields, connections and
     /// issues. Several: the shared fields. A connection: what it is and how to change it.

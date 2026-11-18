@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace AtilganSak.Skills.UI
+namespace HeatInteractive.SkillTreeGenerator.UI
 {
     /// Drives an Animator from the node transitions, so animation is clips and a controller, no code. Parameters (a
     /// missing one is skipped, so a controller only needs the ones it uses):

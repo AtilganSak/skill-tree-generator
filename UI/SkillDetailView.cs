@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
 
-namespace AtilganSak.Skills.UI
+namespace HeatInteractive.SkillTreeGenerator.UI
 {
     /// The info card of the picked node: name, group, icon, description, summary, rank, price, why it can't be bought,
     /// and the Buy button (the panel wires it). Every part is optional: leave a slot empty to drop that line.

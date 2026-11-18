@@ -3,7 +3,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace AtilganSak.Skills.UI
+namespace HeatInteractive.SkillTreeGenerator.UI
 {
     /// The default node colors: the Fill and Outline images (and the rank text) take one Look per state, fading over
     /// FadeTime. UseGroupColor multiplies the fill with the node's group color. Replace freely: it is one feedback.

@@ -1,9 +1,9 @@
 {
-  "name": "com.atilgansak.skilltree",
+  "name": "com.heatinteractive.skilltreegenerator",
   "version": "0.1.0",
-  "displayName": "Skill Tree",
+  "displayName": "Skill Tree Generator",
   "description": "A data-driven skill tree: nodes, links, requirements and ranks, with a visual editor. Derive from SkillNode for your own node types.",
   "unity": "6000.0",
   "dependencies": { "com.unity.ugui": "2.0.0" },
-  "author": { "name": "AtilganSak" }
+  "author": { "name": "Atilgan Sak" }
 }

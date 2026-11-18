@@ -6,7 +6,7 @@ using UnityEditor;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
-namespace AtilganSak.Skills.Editing
+namespace HeatInteractive.SkillTreeGenerator.Editing
 {
     /// Every change the editor makes to a tree, each one undoable. Nodes, groups and stats are hidden sub-assets of the
     /// tree. Public so your own editor tools can build trees the same way.

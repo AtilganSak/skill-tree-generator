@@ -2,7 +2,7 @@ using System.Text;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-namespace AtilganSak.Skills.Editing
+namespace HeatInteractive.SkillTreeGenerator.Editing
 {
     internal enum SimState { Off, Locked, Available, Owned, Maxed }
 

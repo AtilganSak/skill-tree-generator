@@ -1,6 +1,6 @@
 using System;
 
-namespace AtilganSak.Skills
+namespace HeatInteractive.SkillTreeGenerator
 {
     /// Where a SkillNode type sits in the editor's "Add Skill" menus, e.g. "Units/Unlock". Without it the class name is
     /// used. Tooltip is shown in the inspector header.

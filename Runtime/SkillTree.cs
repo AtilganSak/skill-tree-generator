@@ -3,14 +3,14 @@ using System.Collections.Generic;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
-namespace AtilganSak.Skills
+namespace HeatInteractive.SkillTreeGenerator
 {
     /// A skill tree: its nodes, groups and stats (all stored inside this asset), the buy rules, and the stat sums.
     /// Buy rules: the root is always open; any other node opens once a neighbour is owned; then every Requires must be
     /// owned, every targeted effect needs one of its targets unlocked, and the node's own LockReason must be null.
     /// Reading stats from game code: var dmg = tree.Stat("Damage"); damage = tree.Get(dmg, baseDamage, ranks, unit).
     /// Derive from it to add tree-wide data (currencies...) or to reword the lock messages.
-    [CreateAssetMenu(fileName = "SkillTree", menuName = "Skill Tree/Skill Tree", order = 0)]
+    [CreateAssetMenu(fileName = "SkillTree", menuName = "Skill Tree Generator/Skill Tree", order = 0)]
     public class SkillTree : ScriptableObject
     {
         // Edited in the Skill Tree Editor, not as raw lists.

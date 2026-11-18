@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace AtilganSak.Skills.UI
+namespace HeatInteractive.SkillTreeGenerator.UI
 {
     /// The code hook for node transitions: derive, override what you care about, put the component anywhere inside the
     /// node prefab (the SkillNodeView finds it). Every ready-made look (SkillNodeTint, SkillNodePunch, SkillNodeAnimator)

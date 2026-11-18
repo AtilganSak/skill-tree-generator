@@ -235,7 +235,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ae139f20801040341bfe5cb2a0d60c1e, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: AtilganSak.Skills.UI::AtilganSak.Skills.UI.SkillCostRow
+  m_EditorClassIdentifier: HeatInteractive.SkillTreeGenerator.UI::HeatInteractive.SkillTreeGenerator.UI.SkillCostRow
   Icon: {fileID: 5850112413078545280}
   NameText: {fileID: 1283463319438362700}
   AmountText: {fileID: 6648849514631450564}

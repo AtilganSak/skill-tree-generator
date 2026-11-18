@@ -1,0 +1,7 @@
+{
+    "name": "HeatInteractive.SkillTreeGenerator.Editor",
+    "rootNamespace": "HeatInteractive.SkillTreeGenerator.Editing",
+    "references": ["HeatInteractive.SkillTreeGenerator", "HeatInteractive.SkillTreeGenerator.UI", "UnityEngine.UI"],
+    "includePlatforms": ["Editor"],
+    "autoReferenced": true
+}

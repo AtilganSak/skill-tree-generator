@@ -5,7 +5,7 @@ using UnityEngine.EventSystems;
 using UnityEngine.Events;
 using UnityEngine.UI;
 
-namespace AtilganSak.Skills.UI
+namespace HeatInteractive.SkillTreeGenerator.UI
 {
     /// Where a node is for the player. Drives the look (SkillNodeTint), the Animator ("State" int = this enum's value)
     /// and every transition hook.

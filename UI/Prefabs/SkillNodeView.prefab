@@ -52,7 +52,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b81d31c7fbb95b348bd390d86f53691d, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: AtilganSak.Skills.UI::AtilganSak.Skills.UI.SkillNodeView
+  m_EditorClassIdentifier: HeatInteractive.SkillTreeGenerator.UI::HeatInteractive.SkillTreeGenerator.UI.SkillNodeView
   Visual: {fileID: 5020105714196767197}
   Icon: {fileID: 6066173481737705882}
   RankText: {fileID: 5953495896386416591}
@@ -112,7 +112,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5d976b570f3bf7b42a8b45c0f9f3fcdf, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: AtilganSak.Skills.UI::AtilganSak.Skills.UI.SkillNodeAnimator
+  m_EditorClassIdentifier: HeatInteractive.SkillTreeGenerator.UI::HeatInteractive.SkillTreeGenerator.UI.SkillNodeAnimator
   StateParam: State
   SelectedParam: Selected
   OwnedParam: Owned
@@ -131,7 +131,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5640168c04f16284983c9a4a98081f79, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: AtilganSak.Skills.UI::AtilganSak.Skills.UI.SkillNodeTint
+  m_EditorClassIdentifier: HeatInteractive.SkillTreeGenerator.UI::HeatInteractive.SkillTreeGenerator.UI.SkillNodeTint
   Fill: {fileID: 8279817253730318544}
   Outline: {fileID: 5652671156686859855}
   Text: {fileID: 5953495896386416591}
@@ -172,7 +172,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bfa5f2d903a1ddc4c8a5e0e6680caa81, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: AtilganSak.Skills.UI::AtilganSak.Skills.UI.SkillNodePunch
+  m_EditorClassIdentifier: HeatInteractive.SkillTreeGenerator.UI::HeatInteractive.SkillTreeGenerator.UI.SkillNodePunch
   SelectedScale: 1.12
   PunchTime: 0.3
   PunchScale: 0.25

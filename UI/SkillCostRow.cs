@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using Object = UnityEngine.Object;
 
-namespace AtilganSak.Skills.UI
+namespace HeatInteractive.SkillTreeGenerator.UI
 {
     /// One currency line: an icon, the currency's name and an amount. Used for the wallet and for the price in the
     /// detail view; duplicate the prefab and assign your copy on the panel / detail view to restyle either.

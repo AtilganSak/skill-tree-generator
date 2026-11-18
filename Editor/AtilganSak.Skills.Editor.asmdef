@@ -1,7 +1,0 @@
-{
-    "name": "AtilganSak.Skills.Editor",
-    "rootNamespace": "AtilganSak.Skills.Editing",
-    "references": ["AtilganSak.Skills", "AtilganSak.Skills.UI", "UnityEngine.UI"],
-    "includePlatforms": ["Editor"],
-    "autoReferenced": true
-}

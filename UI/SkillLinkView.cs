@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
 
-namespace AtilganSak.Skills.UI
+namespace HeatInteractive.SkillTreeGenerator.UI
 {
     /// The line between two linked nodes. The panel stretches it from one node to the other (width = Image's height,
     /// length = its width, rotation around the middle), then calls SetOn: On = both ends are owned.

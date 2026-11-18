@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-namespace AtilganSak.Skills.UI
+namespace HeatInteractive.SkillTreeGenerator.UI
 {
     /// Pan (drag) and zoom (wheel) for the tree: moves and scales Content inside this rect. Put it on the viewport,
     /// an Image with Raycast Target on (even fully transparent) so it gets the drags that start on empty space or on a node.

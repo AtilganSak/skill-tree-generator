@@ -1,0 +1,6 @@
+{
+    "name": "HeatInteractive.SkillTreeGenerator.UI",
+    "rootNamespace": "HeatInteractive.SkillTreeGenerator.UI",
+    "references": ["HeatInteractive.SkillTreeGenerator", "Unity.TextMeshPro", "UnityEngine.UI"],
+    "autoReferenced": true
+}

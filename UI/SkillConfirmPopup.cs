@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
 
-namespace AtilganSak.Skills.UI
+namespace HeatInteractive.SkillTreeGenerator.UI
 {
     /// A small yes / cancel question over the panel. Keep the object inactive in the prefab: Open turns it on, Yes
     /// or Cancel turns it off. Its background should be a full-size Image with Raycast Target on, so nothing behind

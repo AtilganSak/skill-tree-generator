@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
-namespace AtilganSak.Skills
+namespace HeatInteractive.SkillTreeGenerator
 {
     /// One part of a price: an amount of some currency. The currency is any asset the game uses for money (a coin
     /// asset, a loot type...); the tree never looks inside it, it only hands it to the game's ISkillWallet.

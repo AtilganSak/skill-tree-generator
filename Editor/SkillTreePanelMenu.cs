@@ -1,19 +1,19 @@
 using System;
 using System.Linq;
-using AtilganSak.Skills.UI;
+using HeatInteractive.SkillTreeGenerator.UI;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-namespace AtilganSak.Skills.Editing
+namespace HeatInteractive.SkillTreeGenerator.Editing
 {
     /// Puts the ready-made SkillTreePanel prefab into the scene's first Canvas (a Canvas and an EventSystem are made if
     /// the scene has none). The panel is a prefab instance: edit it in place, or Unpack it to change its structure.
     internal static class SkillTreePanelMenu
     {
         [MenuItem("GameObject/UI/Skill Tree Panel", false, 100)]
-        [MenuItem("Tools/Add Skill Tree Panel To Canvas", false, 1)]
+        [MenuItem("Tools/Skill Tree Generator/Add Panel To Canvas", false, 1)]
         private static void AddPanel()
         {
             var prefab = FindPrefab();

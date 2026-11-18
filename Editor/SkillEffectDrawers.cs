@@ -7,7 +7,7 @@ using UnityEngine;
 using UnityEngine.UIElements;
 using Object = UnityEngine.Object;
 
-namespace AtilganSak.Skills.Editing
+namespace HeatInteractive.SkillTreeGenerator.Editing
 {
     /// A SkillStat field picks from its own tree's stats (or makes a new one), not from the whole project.
     [CustomPropertyDrawer(typeof(SkillStat))]
@@ -120,7 +120,7 @@ namespace AtilganSak.Skills.Editing
 
         private static bool IsProjectAssembly(string name) =>
             !(name.StartsWith("Unity") || name.StartsWith("System") || name.StartsWith("Mono") || name.StartsWith("Microsoft")
-              || name.StartsWith("nunit") || name.Contains("Editor") || name.StartsWith("AtilganSak.Skills"));
+              || name.StartsWith("nunit") || name.Contains("Editor") || name.StartsWith("HeatInteractive.SkillTreeGenerator"));
 
         public override VisualElement CreatePropertyGUI(SerializedProperty property)
         {

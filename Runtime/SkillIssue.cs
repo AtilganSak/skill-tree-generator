@@ -1,4 +1,4 @@
-namespace AtilganSak.Skills
+namespace HeatInteractive.SkillTreeGenerator
 {
     /// One validation finding. Node is null for tree-wide ones.
     public readonly struct SkillIssue

@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace AtilganSak.Skills
+namespace HeatInteractive.SkillTreeGenerator
 {
     public enum SkillStatKind
     {

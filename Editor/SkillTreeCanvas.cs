@@ -6,7 +6,7 @@ using UnityEngine;
 using UnityEngine.UIElements;
 using Object = UnityEngine.Object;
 
-namespace AtilganSak.Skills.Editing
+namespace HeatInteractive.SkillTreeGenerator.Editing
 {
     /// The pan/zoom canvas. Left drag: move skills (on a skill), box select (on empty space), connect (from the "+"
     /// handle). Middle drag or Alt + left drag: pan. Wheel: zoom. Right click: context menu. In simulation mode left

@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace AtilganSak.Skills
+namespace HeatInteractive.SkillTreeGenerator
 {
     /// Whatever holds the player's ranks (a save, a test book). The tree asks it, never stores ranks itself.
     public interface ISkillRanks

@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace AtilganSak.Skills
+namespace HeatInteractive.SkillTreeGenerator
 {
     /// A named color for a set of nodes (a branch, a sector, a theme). Stored inside its tree asset.
     public class SkillGroup : ScriptableObject

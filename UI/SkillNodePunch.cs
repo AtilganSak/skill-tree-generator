@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace AtilganSak.Skills.UI
+namespace HeatInteractive.SkillTreeGenerator.UI
 {
     /// The default node motion on the view's Visual: a scale pop when a rank is bought, a bigger resting scale while
     /// selected, a sideways shake when buying is refused. Curves and amounts are yours to edit. Replace freely.

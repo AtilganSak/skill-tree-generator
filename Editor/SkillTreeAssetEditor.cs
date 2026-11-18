@@ -2,7 +2,7 @@ using UnityEditor;
 using UnityEditor.UIElements;
 using UnityEngine.UIElements;
 
-namespace AtilganSak.Skills.Editing
+namespace HeatInteractive.SkillTreeGenerator.Editing
 {
     /// The tree asset's own inspector: a button into the Skill Tree Editor, then its regular fields.
     [CustomEditor(typeof(SkillTree), true)]

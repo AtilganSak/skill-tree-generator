@@ -632,7 +632,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e8666a9d4d9b328459431f997719a43c, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: AtilganSak.Skills.UI::AtilganSak.Skills.UI.SkillTreePanel
+  m_EditorClassIdentifier: HeatInteractive.SkillTreeGenerator.UI::HeatInteractive.SkillTreeGenerator.UI.SkillTreePanel
   Viewport: {fileID: 2113360993955529534}
   LinkRoot: {fileID: 7343649145701091949}
   NodeRoot: {fileID: 2486673171520587788}
@@ -1038,7 +1038,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 603cc899647a1c9449138b2d84ca60c9, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: AtilganSak.Skills.UI::AtilganSak.Skills.UI.SkillTreeViewport
+  m_EditorClassIdentifier: HeatInteractive.SkillTreeGenerator.UI::HeatInteractive.SkillTreeGenerator.UI.SkillTreeViewport
   Content: {fileID: 3408116280692032087}
   _minZoom: 0.25
   _maxZoom: 1.6
@@ -1287,7 +1287,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0268700730b49a24990230263c430391, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: AtilganSak.Skills.UI::AtilganSak.Skills.UI.SkillConfirmPopup
+  m_EditorClassIdentifier: HeatInteractive.SkillTreeGenerator.UI::HeatInteractive.SkillTreeGenerator.UI.SkillConfirmPopup
 --- !u!224 &5952847116906404990 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 4483853497410393876, guid: 3de9f0ab37a6d8a4da284263a4275955, type: 3}
@@ -1580,7 +1580,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 63c4a2f22c1801d4bbc078a8f1f3f780, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: AtilganSak.Skills.UI::AtilganSak.Skills.UI.SkillDetailView
+  m_EditorClassIdentifier: HeatInteractive.SkillTreeGenerator.UI::HeatInteractive.SkillTreeGenerator.UI.SkillDetailView
 --- !u!224 &5232659537255165850 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 4377525013257642588, guid: 5d86edabdb99995409e82cc4036c1bba, type: 3}

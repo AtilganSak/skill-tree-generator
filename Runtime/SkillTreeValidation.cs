@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace AtilganSak.Skills
+namespace HeatInteractive.SkillTreeGenerator
 {
     /// The built-in checks plus every node's own Validate. Pure: nothing is changed, so it runs anywhere (editor, tests).
     public static class SkillTreeValidation

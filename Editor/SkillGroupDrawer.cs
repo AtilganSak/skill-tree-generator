@@ -5,7 +5,7 @@ using UnityEditor.UIElements;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-namespace AtilganSak.Skills.Editing
+namespace HeatInteractive.SkillTreeGenerator.Editing
 {
     /// A SkillGroup field picks from its own tree's groups (a dropdown with the group colors), not from the whole project.
     [CustomPropertyDrawer(typeof(SkillGroup))]

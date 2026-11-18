@@ -1,0 +1,6 @@
+{
+    "name": "HeatInteractive.SkillTreeGenerator",
+    "rootNamespace": "HeatInteractive.SkillTreeGenerator",
+    "references": [],
+    "autoReferenced": true
+}

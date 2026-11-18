@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
-namespace AtilganSak.Skills
+namespace HeatInteractive.SkillTreeGenerator
 {
     /// A player in a tree: their ranks, stat reads, unlocks, and buying with the game's ISkillWallet. The game only
     /// says where the money is, saves on Changed, and sets Current so gameplay can ask from anywhere.

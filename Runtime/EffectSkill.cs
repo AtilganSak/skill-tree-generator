@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace AtilganSak.Skills
+namespace HeatInteractive.SkillTreeGenerator
 {
     /// The ready-made skill: stat effects per rank and the assets it unlocks. Enough for a whole tree without code;
     /// derive from it to add your own fields (a cost...).

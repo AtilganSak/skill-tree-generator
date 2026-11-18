@@ -7,7 +7,7 @@ using UnityEditor.UIElements;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-namespace AtilganSak.Skills.Editing
+namespace HeatInteractive.SkillTreeGenerator.Editing
 {
     /// Tools > Skill Tree Editor (or double-click a SkillTree asset). Canvas on the left, inspector on the right,
     /// everything undoable, saved on its own a moment after each change.
@@ -15,7 +15,7 @@ namespace AtilganSak.Skills.Editing
     {
         // SkillTreeWindow.uss by its GUID, so the folder can live anywhere (Assets or Packages).
         private const string StyleGuid = "466c61d1311c8ec488e2c0b6d5f21d62";
-        private const string LastTreeKey = "AtilganSak.Skills.LastTree";
+        private const string LastTreeKey = "HeatInteractive.SkillTreeGenerator.LastTree";
         private const string DefaultHint = "Double-click empty space to add a skill  ·  drag a skill's + handle to connect  ·  right-click for more";
 
         [SerializeField] private SkillTree _tree;
@@ -36,7 +36,7 @@ namespace AtilganSak.Skills.Editing
         private SkillGroup _groupFilter;
         private IVisualElementScheduledItem _validateLater, _saveLater;
 
-        [MenuItem("Tools/Skill Tree Editor", priority = 0)]
+        [MenuItem("Tools/Skill Tree Generator/Editor", priority = 0)]
         public static void ShowWindow() => Open(null);
 
         public static SkillTreeWindow Open(SkillTree tree)
@@ -342,7 +342,7 @@ namespace AtilganSak.Skills.Editing
             bool noTypes = SkillTreeEditing.NodeTypes.Count == 0;
             bool emptyTree = hasTree && !_tree.Nodes.Any(n => n != null);
             _noTypes.text = noTypes
-                ? "No skill types in this project yet.\nCreate a class that derives from AtilganSak.Skills.SkillNode,\nthen its skills can be added here."
+                ? "No skill types in this project yet.\nCreate a class that derives from HeatInteractive.SkillTreeGenerator.SkillNode,\nthen its skills can be added here."
                 : "This tree is empty.\nDouble-click anywhere to add the first skill: it becomes the root,\nthe skill the whole tree opens from.";
             _noTypes.style.display = hasTree && (noTypes || emptyTree) ? DisplayStyle.Flex : DisplayStyle.None;
             if (hasTree) _snapToggle.SetValueWithoutNotify(_tree.Layout.Snap);
@@ -469,7 +469,7 @@ namespace AtilganSak.Skills.Editing
 
         // ---------------------------------------------------------------- view per tree (this session)
 
-        private string ViewKey => _tree != null ? "AtilganSak.Skills.View." + AssetDatabase.AssetPathToGUID(AssetDatabase.GetAssetPath(_tree)) : null;
+        private string ViewKey => _tree != null ? "HeatInteractive.SkillTreeGenerator.View." + AssetDatabase.AssetPathToGUID(AssetDatabase.GetAssetPath(_tree)) : null;
 
         private void SaveView()
         {

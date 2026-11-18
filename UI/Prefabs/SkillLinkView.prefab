@@ -87,7 +87,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 73f89021c4da8e84cbcd700e7e3cf045, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: AtilganSak.Skills.UI::AtilganSak.Skills.UI.SkillLinkView
+  m_EditorClassIdentifier: HeatInteractive.SkillTreeGenerator.UI::HeatInteractive.SkillTreeGenerator.UI.SkillLinkView
   Line: {fileID: 5686350584135828599}
   OffColor: {r: 1, g: 1, b: 1, a: 0.18}
   OnColor: {r: 1, g: 1, b: 1, a: 0.85}

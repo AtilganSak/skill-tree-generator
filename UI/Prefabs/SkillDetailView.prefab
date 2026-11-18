@@ -1213,7 +1213,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 63c4a2f22c1801d4bbc078a8f1f3f780, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: AtilganSak.Skills.UI::AtilganSak.Skills.UI.SkillDetailView
+  m_EditorClassIdentifier: HeatInteractive.SkillTreeGenerator.UI::HeatInteractive.SkillTreeGenerator.UI.SkillDetailView
   Icon: {fileID: 4370945063422927220}
   Title: {fileID: 1123575452510983628}
   GroupText: {fileID: 6342963325028195869}
