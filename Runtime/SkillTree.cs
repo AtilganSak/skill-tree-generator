@@ -29,7 +29,6 @@ namespace HeatInteractive.SkillTreeGenerator
         [NonSerialized] private readonly Dictionary<SkillNode, List<SkillNode>> _links = new();
         [NonSerialized] private readonly Dictionary<Type, object> _byType = new();
         [NonSerialized] private readonly Dictionary<SkillStat, List<(SkillNode node, SkillEffect effect)>> _byStat = new();
-        [NonSerialized] private readonly Dictionary<Object, List<SkillNode>> _unlockers = new();
         [NonSerialized] private readonly Dictionary<string, SkillStat> _statByKey = new(StringComparer.OrdinalIgnoreCase);
         private static readonly List<SkillNode> NoLinks = new();
 
@@ -96,7 +95,6 @@ namespace HeatInteractive.SkillTreeGenerator
             _byId.Clear();
             _links.Clear();
             _byStat.Clear();
-            _unlockers.Clear();
             _statByKey.Clear();
 
             foreach (var stat in Stats)
@@ -121,12 +119,6 @@ namespace HeatInteractive.SkillTreeGenerator
                     if (effect?.Stat == null) continue;
                     if (!_byStat.TryGetValue(effect.Stat, out var list)) _byStat[effect.Stat] = list = new();
                     list.Add((node, effect));
-                }
-                foreach (var unlock in node.GetUnlocks())
-                {
-                    if (unlock == null) continue;
-                    if (!_unlockers.TryGetValue(unlock, out var list)) _unlockers[unlock] = list = new();
-                    if (!list.Contains(node)) list.Add(node);
                 }
             }
         }
@@ -170,35 +162,6 @@ namespace HeatInteractive.SkillTreeGenerator
             if (stat == null) return baseValue;
             float value = Get(stat, ranks);
             return stat.Kind == SkillStatKind.Percent ? baseValue * value : baseValue + value;
-        }
-
-        // ---------------------------------------------------------------- unlocks
-
-        /// Some node unlocks it: it stays locked until one of those is owned.
-        public bool IsGated(Object target)
-        {
-            Build();
-            return target != null && _unlockers.ContainsKey(target);
-        }
-
-        /// The nodes that unlock the target.
-        public IReadOnlyList<SkillNode> UnlockersOf(Object target)
-        {
-            Build();
-            return target != null && _unlockers.TryGetValue(target, out var list) ? list : NoLinks;
-        }
-
-        /// Gated: one of its unlocking nodes is owned. Not gated: its default (ISkillTarget, else open).
-        public bool IsUnlocked(Object target, ISkillRanks ranks) => IsUnlocked(target, ranks, SkillTargets.UnlockedByDefault(target));
-
-        public bool IsUnlocked(Object target, ISkillRanks ranks, bool openByDefault)
-        {
-            if (target == null) return openByDefault;
-            Build();
-            if (!_unlockers.TryGetValue(target, out var list)) return openByDefault;
-            foreach (var node in list)
-                if (ranks.IsOwned(node)) return true;
-            return false;
         }
 
         // ---------------------------------------------------------------- rules

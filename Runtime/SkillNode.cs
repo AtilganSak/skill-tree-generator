@@ -4,14 +4,12 @@ using UnityEngine;
 
 namespace HeatInteractive.SkillTreeGenerator
 {
-    /// One node of a SkillTree. EffectSkill is the ready-made one (stat effects + unlocks); derive from SkillNode or
+    /// One node of a SkillTree. EffectSkill is the ready-made one (stat effects); derive from SkillNode or
     /// EffectSkill for your own node types: every serialized field you add shows up in the Skill Tree Editor's
     /// inspector, and the editor's "Add Skill" menus list every non-abstract subclass.
     /// Nodes are stored inside their tree asset (as hidden sub-assets), so one tree = one file.
     public abstract class SkillNode : ScriptableObject
     {
-        private static readonly Color UnlockColor = new(1f, 0.85f, 0.2f);
-
         [Tooltip("The save key. Given by the tree, never reused, never changed.")]
         [HideInInspector] public int Id;
 
@@ -39,12 +37,6 @@ namespace HeatInteractive.SkillTreeGenerator
             yield break;
         }
 
-        /// What the node opens once owned (a unit, an ability...).
-        public virtual IEnumerable<Object> GetUnlocks()
-        {
-            yield break;
-        }
-
         /// Why this node can't be bought, on top of Requires and reachability. Null = nothing.
         public virtual string LockReason(SkillTree tree, ISkillRanks ranks) => null;
 
@@ -54,11 +46,6 @@ namespace HeatInteractive.SkillTreeGenerator
             get
             {
                 var sb = new StringBuilder();
-                foreach (var unlock in GetUnlocks())
-                {
-                    if (unlock == null) continue;
-                    sb.Append(sb.Length == 0 ? "Unlocks " : ", ").Append(SkillTargets.NameOf(unlock));
-                }
                 foreach (var effect in GetEffects())
                 {
                     if (effect == null) continue;
@@ -74,15 +61,8 @@ namespace HeatInteractive.SkillTreeGenerator
             }
         }
 
-        /// An extra ring color in the editor. Default: gold for nodes that unlock something.
-        public virtual Color? Accent
-        {
-            get
-            {
-                foreach (var unlock in GetUnlocks()) if (unlock != null) return UnlockColor;
-                return null;
-            }
-        }
+        /// An extra ring color in the editor. Default: none.
+        public virtual Color? Accent => null;
 
         /// Your own checks, run by the editor's validation next to the built-in ones (Ids, links, effects, cycles...).
         public virtual IEnumerable<SkillIssue> Validate(SkillTree tree)

@@ -5,7 +5,7 @@ using Object = UnityEngine.Object;
 
 namespace HeatInteractive.SkillTreeGenerator
 {
-    /// A player in a tree: their ranks, stat reads, unlocks, and buying with the game's ISkillWallet. The game only
+    /// A player in a tree: their ranks, stat reads, and buying with the game's ISkillWallet. The game only
     /// says where the money is, saves on Changed, and sets Current so gameplay can ask from anywhere.
     /// Reading a stat: Get("Key", baseValue). A percent stat multiplies the base, a flat one adds to it: pass 1
     /// for a multiplier, 0 for an amount. A Key the tree doesn't have leaves the base as it is (warned once: a typo).
@@ -57,7 +57,7 @@ namespace HeatInteractive.SkillTreeGenerator
 
         public void NotifyChanged() => Changed?.Invoke();
 
-        // ---------------------------------------------------------------- stats and unlocks
+        // ---------------------------------------------------------------- stats
 
         private SkillStat StatOf(string key)
         {
@@ -74,13 +74,6 @@ namespace HeatInteractive.SkillTreeGenerator
             var s = StatOf(stat);
             return s == null ? baseValue : Tree.Get(s, baseValue, Ranks);
         }
-
-        /// Some node unlocks this asset, so it stays locked until one is owned.
-        public bool IsGated(Object target) => Tree != null && Tree.IsGated(target);
-
-        /// Gated assets need an owned unlocking node; the rest use openByDefault.
-        public bool IsUnlocked(Object target, bool openByDefault) =>
-            Tree != null ? Tree.IsUnlocked(target, Ranks, openByDefault) : openByDefault;
 
         // ---------------------------------------------------------------- rules
 

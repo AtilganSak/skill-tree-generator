@@ -86,8 +86,6 @@ namespace HeatInteractive.SkillTreeGenerator
 
         private static void CheckEffects(SkillTree tree, SkillNode node, List<SkillIssue> issues)
         {
-            foreach (var unlock in node.GetUnlocks())
-                if (unlock == null) issues.Add(SkillIssue.Warning(node, "An empty slot in Unlocks."));
             if (node.Cost != null && node.Cost.Any(c => c.Currency == null))
                 issues.Add(SkillIssue.Warning(node, "A cost has no currency, so it is skipped."));
 

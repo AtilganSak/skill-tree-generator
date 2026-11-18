@@ -199,7 +199,7 @@ namespace HeatInteractive.SkillTreeGenerator.Editing
             for (var it = so.GetIterator(); it.NextVisible(it.propertyPath == "");)
             {
                 if (it.propertyPath == "m_Script") continue;
-                if (it.isArray && it.propertyType == SerializedPropertyType.Generic) it.isExpanded = true; // lists open: effects, unlocks, cost
+                if (it.isArray && it.propertyType == SerializedPropertyType.Generic) it.isExpanded = true; // lists open: effects, cost
                 box.Add(new PropertyField(it.Copy()));
             }
             box.Bind(so);
