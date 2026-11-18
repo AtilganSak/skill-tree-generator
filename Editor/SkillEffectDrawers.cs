@@ -56,7 +56,7 @@ namespace HeatInteractive.SkillTreeGenerator.Editing
         private static string Label(SkillStat s) => $"{s.DisplayName}  ({(s.Kind == SkillStatKind.Percent ? "%" : string.IsNullOrEmpty(s.Unit) ? "flat" : s.Unit)})";
     }
 
-    /// One effect: the stat, how much per rank (with its unit), and the rarely needed extras folded away.
+    /// One effect: the stat, how much per rank (with its unit), and the start rank.
     [CustomPropertyDrawer(typeof(SkillEffect))]
     internal class SkillEffectDrawer : PropertyDrawer
     {
@@ -79,10 +79,7 @@ namespace HeatInteractive.SkillTreeGenerator.Editing
             amountRow.Add(unit);
             root.Add(amountRow);
 
-            var more = new Foldout { text = "More", value = false };
-            more.AddToClassList("effect__more");
-            more.Add(new PropertyField(property.FindPropertyRelative(nameof(SkillEffect.StartRank))));
-            root.Add(more);
+            root.Add(new PropertyField(property.FindPropertyRelative(nameof(SkillEffect.StartRank))));
 
             void Paint()
             {

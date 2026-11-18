@@ -15,7 +15,7 @@ namespace HeatInteractive.SkillTreeGenerator.Editing
 
         public readonly SkillNode Node;
         public readonly VisualElement Port;
-        private readonly VisualElement _circle, _accent, _badge;
+        private readonly VisualElement _circle, _badge;
         private readonly Image _icon;
         private readonly Label _initials, _title, _summary, _rank;
         private SimState _sim;
@@ -28,7 +28,6 @@ namespace HeatInteractive.SkillTreeGenerator.Editing
             Node = node;
             AddToClassList("skill-node");
 
-            _accent = Child(this, "skill-node__accent");
             Child(this, "skill-node__selection");
             _circle = Child(this, "skill-node__circle");
             _icon = new Image { scaleMode = ScaleMode.ScaleToFit, pickingMode = PickingMode.Ignore };
@@ -78,10 +77,6 @@ namespace HeatInteractive.SkillTreeGenerator.Editing
             var color = Node.Group != null ? Node.Group.Color : NoGroup;
             SetBorderColor(_circle, color);
             _circle.style.backgroundColor = Color.Lerp(Base, color, 0.3f);
-
-            var accent = Node.Accent;
-            _accent.style.display = accent.HasValue ? DisplayStyle.Flex : DisplayStyle.None;
-            if (accent.HasValue) SetBorderColor(_accent, accent.Value);
 
             bool hasIcon = Node.Icon != null;
             _icon.sprite = Node.Icon;

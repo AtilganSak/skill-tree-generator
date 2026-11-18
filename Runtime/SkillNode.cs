@@ -61,9 +61,6 @@ namespace HeatInteractive.SkillTreeGenerator
             }
         }
 
-        /// An extra ring color in the editor. Default: none.
-        public virtual Color? Accent => null;
-
         /// Your own checks, run by the editor's validation next to the built-in ones (Ids, links, effects, cycles...).
         public virtual IEnumerable<SkillIssue> Validate(SkillTree tree)
         {

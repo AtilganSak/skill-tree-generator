@@ -184,35 +184,19 @@
     font-size: 22px;
 }
 
-.skill-node__accent,
 .skill-node__selection {
     position: absolute;
-    left: -7px;
-    top: -7px;
-    right: -7px;
-    bottom: -7px;
-    border-radius: 50%;
-    border-width: 2px;
-}
-
-.skill-node__selection {
     left: -5px;
     top: -5px;
     right: -5px;
     bottom: -5px;
+    border-radius: 50%;
     border-width: 0;
     border-color: rgb(255, 255, 255);
 }
 
 .skill-node--selected .skill-node__selection {
     border-width: 3px;
-}
-
-.skill-node--selected .skill-node__accent {
-    left: -11px;
-    top: -11px;
-    right: -11px;
-    bottom: -11px;
 }
 
 .skill-node--target .skill-node__selection {
@@ -756,10 +740,6 @@
     font-size: 11px;
     opacity: 0.65;
     margin-left: 4px;
-}
-
-.effect__more {
-    margin-left: 0;
 }
 
 .stat-filter {
