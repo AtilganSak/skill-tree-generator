@@ -40,19 +40,37 @@ public class GameWallet : ISkillWallet
 Create the player's book once (the panel and your gameplay read it from `SkillBook.Current`):
 
 ```csharp
-var ranks = SkillRanks.FromJson(PlayerPrefs.GetString("skills"));
-SkillBook.Current = new SkillBook(tree, ranks, new GameWallet());
-ranks.Changed += () => PlayerPrefs.SetString("skills", ranks.ToJson());   // save
+SkillBook.Current = new SkillBook(tree, new SkillRanks(), new GameWallet());
 ```
+
+## Save and load
+
+The player's ranks live in a `SkillRanks`. It is serializable, so it can sit in your save data as a field, or go through JSON as a string:
+
+```csharp
+// save
+string json = book.Ranks.ToJson();
+
+// load (empty or null text gives an empty book)
+var ranks = SkillRanks.FromJson(json);
+SkillBook.Current = new SkillBook(tree, ranks, new GameWallet());
+```
+
+`ranks.Changed` fires whenever a rank is set or cleared: a good moment to save.
 
 ## Use the skills
 
 ```csharp
 var book = SkillBook.Current;
 
-float damage = book.GetStat("Damage", 10f);        // percent multiplies, flat adds
-bool turret2 = book.GetStat("Turret2", false);     // flag
+float damage = book.GetStat<float>("Damage", 10f);    // percent multiplies the base, flat adds to it
+int pierce   = book.GetStat<int>("Pierce", 1);        // flat, rounded to an int
+bool turret2 = book.GetStat<bool>("Turret2", false);  // flag: on once a skill of it is active
+```
 
+The type can be left out, it comes from the base value: `book.GetStat("Damage", 10f)`. Reading a stat as the wrong type (a flag as `float`) warns and gives the base value.
+
+```csharp
 book.RankChanged += (node, from, to) =>
 {
     if (from == 0 && to > 0) Debug.Log($"{node.DisplayName} unlocked");
