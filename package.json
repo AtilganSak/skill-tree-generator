@@ -1,6 +1,6 @@
 {
   "name": "com.heatinteractive.skilltreegenerator",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "displayName": "Skill Tree Generator",
   "description": "A data-driven skill tree: nodes, links, requirements and ranks, with a visual editor. Derive from SkillNode for your own node types.",
   "unity": "6000.0",
