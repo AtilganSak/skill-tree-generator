@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
-using Object = UnityEngine.Object;
 
 namespace HeatInteractive.SkillTreeGenerator.UI
 {
@@ -74,7 +73,7 @@ namespace HeatInteractive.SkillTreeGenerator.UI
         /// node and the state StateOf worked out, returns the state to show.
         public Func<SkillNode, SkillNodeState, SkillNodeState> StateFilter;
         /// Set from code to hide some currency rows. Gets the currency, returns whether to show it.
-        public Func<Object, bool> CurrencyFilter;
+        public Func<SkillCurrency, bool> CurrencyFilter;
 
         public event Action<SkillNodeView> NodeSelected;
         public event Action<SkillNodeView> NodePurchased;
@@ -86,7 +85,7 @@ namespace HeatInteractive.SkillTreeGenerator.UI
         private readonly List<SkillNodeView> _nodes = new();
         private readonly Dictionary<SkillNode, SkillNodeView> _views = new(); // node -> view, so links and Select don't scan _nodes
         private readonly List<SkillLinkView> _links = new();
-        private readonly List<(Object currency, SkillCostRow row)> _wallet = new();
+        private readonly List<(SkillCurrency currency, SkillCostRow row)> _wallet = new();
         private SkillNodeView _selected;
         private int _walletSignature;
 
@@ -246,7 +245,7 @@ namespace HeatInteractive.SkillTreeGenerator.UI
         private void BuildWallet(SkillTree tree)
         {
             if (WalletRoot == null || WalletRowPrefab == null) return;
-            var seen = new HashSet<Object>();
+            var seen = new HashSet<SkillCurrency>();
             foreach (var node in tree.Nodes)
             {
                 if (node == null || node.Cost == null) continue;
@@ -333,7 +332,7 @@ namespace HeatInteractive.SkillTreeGenerator.UI
         }
 
         /// Which currency rows show in the wallet. Override to hide some (a currency not found yet...).
-        protected virtual bool ShowCurrency(Object currency) => CurrencyFilter == null || CurrencyFilter(currency);
+        protected virtual bool ShowCurrency(SkillCurrency currency) => CurrencyFilter == null || CurrencyFilter(currency);
 
         private void RefreshWallet(SkillBook book)
         {

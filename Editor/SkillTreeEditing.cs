@@ -62,6 +62,7 @@ namespace HeatInteractive.SkillTreeGenerator.Editing
                 SkillNode node => node.DisplayName,
                 SkillGroup group => group.DisplayName,
                 SkillStat stat => stat.DisplayName,
+                SkillCurrency currency => currency.DisplayName,
                 _ => o.name
             };
             if (string.IsNullOrWhiteSpace(want)) want = "Unnamed";
@@ -333,6 +334,50 @@ namespace HeatInteractive.SkillTreeGenerator.Editing
 
         public static List<SkillNode> UsersOf(SkillTree tree, SkillStat stat) =>
             tree.Nodes.Where(n => n != null && n.GetEffects().Any(e => e != null && e.Stat == stat)).ToList();
+
+        // ---------------------------------------------------------------- currencies
+
+        public static SkillCurrency CreateCurrency(SkillTree tree)
+        {
+            var currency = ScriptableObject.CreateInstance<SkillCurrency>();
+            currency.hideFlags = HideFlags.HideInHierarchy;
+            for (int i = 1; ; i++)
+            {
+                string name = i == 1 ? "New Currency" : $"New Currency {i}";
+                if (tree.Currencies.Any(c => c != null && c.DisplayName == name)) continue;
+                currency.DisplayName = name;
+                break;
+            }
+            currency.Key = currency.DisplayName.Replace(" ", "");
+            SyncName(currency);
+            Undo.RecordObject(tree, "Create Currency");
+            AssetDatabase.AddObjectToAsset(currency, tree);
+            Undo.RegisterCreatedObjectUndo(currency, "Create Currency");
+            tree.Currencies.Add(currency);
+            Mark(tree, currency);
+            return currency;
+        }
+
+        /// Removes the currency; costs that used it are left with no currency (validation points them out).
+        public static void DeleteCurrency(SkillTree tree, SkillCurrency currency)
+        {
+            int undo = BeginGroup("Delete Currency");
+            Undo.RecordObject(tree, "Delete Currency");
+            foreach (var node in UsersOf(tree, currency))
+            {
+                Undo.RecordObject(node, "Delete Currency");
+                for (int i = 0; i < node.Cost.Count; i++)
+                    if (node.Cost[i].Currency == currency) node.Cost[i] = new SkillCost { Amount = node.Cost[i].Amount };
+                EditorUtility.SetDirty(node);
+            }
+            tree.Currencies.Remove(currency);
+            Undo.DestroyObjectImmediate(currency);
+            Undo.CollapseUndoOperations(undo);
+            Mark(tree);
+        }
+
+        public static List<SkillNode> UsersOf(SkillTree tree, SkillCurrency currency) =>
+            tree.Nodes.Where(n => n != null && n.Cost != null && n.Cost.Any(c => c.Currency == currency)).ToList();
 
         // ---------------------------------------------------------------- groups
 

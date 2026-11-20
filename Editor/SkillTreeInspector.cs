@@ -449,6 +449,7 @@ namespace HeatInteractive.SkillTreeGenerator.Editing
             RefreshIssues();
 
             BuildStats();
+            BuildCurrencies();
             BuildGroups();
 
             var settings = Section("Settings");
@@ -557,6 +558,62 @@ namespace HeatInteractive.SkillTreeGenerator.Editing
             bool Show(SkillStat s) => s != null && (_statFilter.Length == 0
                 || s.DisplayName.IndexOf(_statFilter, StringComparison.OrdinalIgnoreCase) >= 0
                 || s.Key.IndexOf(_statFilter, StringComparison.OrdinalIgnoreCase) >= 0);
+        }
+
+        private static SkillCurrency _expandCurrency;
+
+        private void BuildCurrencies()
+        {
+            var section = Section("Currencies",
+                "What skills cost. Your ISkillWallet maps each one to the game's own money by its Key, e.g. case \"gold\".");
+            foreach (var currency in Tree.Currencies.Where(c => c != null).OrderBy(c => c.DisplayName))
+            {
+                var c = currency;
+                var users = SkillTreeEditing.UsersOf(Tree, c);
+                var foldout = new Foldout { value = c == _expandCurrency };
+                foldout.AddToClassList("stat");
+                void Title() => foldout.text = $"{c.DisplayName}   <color=#888>{c.Key} · {users.Count} use{(users.Count == 1 ? "" : "s")}</color>";
+                Title();
+
+                var so = new SerializedObject(c);
+                for (var it = so.GetIterator(); it.NextVisible(it.propertyPath == ""); )
+                {
+                    if (it.propertyPath == "m_Script") continue;
+                    var field = new PropertyField(it.Copy());
+                    field.Bind(so);
+                    foldout.Add(field);
+                }
+                foldout.TrackSerializedObjectValue(so, _ =>
+                {
+                    SkillTreeEditing.SyncName(c);
+                    Title();
+                    _window.OnStatsEdited(false);
+                });
+
+                var actions = Row(foldout);
+                if (users.Count > 0)
+                    ActionButton(actions, $"Pick its {users.Count} skill{(users.Count == 1 ? "" : "s")}", () =>
+                    {
+                        Canvas.Select(users);
+                        Canvas.Frame(users);
+                    });
+                ActionButton(actions, "Delete", () =>
+                {
+                    if (users.Count > 0 && !EditorUtility.DisplayDialog("Delete currency",
+                            $"\"{c.DisplayName}\" is used by {users.Count} skill(s). Those costs will have no currency until you pick another.",
+                            "Delete", "Cancel")) return;
+                    SkillTreeEditing.DeleteCurrency(Tree, c);
+                    _window.OnStatsEdited(true);
+                }, "action--danger");
+                section.Add(foldout);
+            }
+
+            if (Tree.Currencies.All(c => c == null)) Hint(section, "No currencies yet. Add one, then pick it in a skill's Cost.");
+            ActionButton(Row(section), "+ Add Currency", () =>
+            {
+                _expandCurrency = SkillTreeEditing.CreateCurrency(Tree);
+                _window.OnStatsEdited(true);
+            });
         }
 
         private void BuildGroups()

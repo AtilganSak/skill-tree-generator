@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace HeatInteractive.SkillTreeGenerator
 {
-    /// The built-in checks plus every node's own Validate. Pure: nothing is changed, so it runs anywhere (editor, tests).
+    /// The built-in checks plus every node's own Validate. Changes nothing but the tree's caches (dropped first), so it runs anywhere (editor, tests).
     public static class SkillTreeValidation
     {
         private const float OverlapDistance = 30f;
@@ -67,6 +67,7 @@ namespace HeatInteractive.SkillTreeGenerator
                     issues.Add(SkillIssue.Warning(nodes[j], $"Sits on top of \"{nodes[i].DisplayName}\"."));
 
             CheckStats(tree, issues);
+            CheckCurrencies(tree, issues);
             foreach (var node in nodes) CheckEffects(tree, node, issues);
             foreach (var node in nodes) issues.AddRange(node.Validate(tree));
             issues.AddRange(tree.ValidateTree());
@@ -80,14 +81,33 @@ namespace HeatInteractive.SkillTreeGenerator
                 issues.Add(SkillIssue.Error(null, $"Stat \"{stat.DisplayName}\" has no Key, so code can't ask for it."));
             foreach (var group in stats.Where(s => !string.IsNullOrWhiteSpace(s.Key)).GroupBy(s => s.Key.ToLowerInvariant()).Where(g => g.Count() > 1))
                 issues.Add(SkillIssue.Error(null, $"{group.Count()} stats share the Key \"{group.First().Key}\": code would only ever find the first."));
-            if (!string.IsNullOrEmpty(tree.PriceStat) && tree.Stat(tree.PriceStat) == null)
-                issues.Add(SkillIssue.Warning(null, $"Price Stat \"{tree.PriceStat}\" isn't a stat of this tree, so prices aren't scaled."));
+            if (!string.IsNullOrEmpty(tree.PriceStat))
+            {
+                var price = tree.Stat(tree.PriceStat);
+                if (price == null)
+                    issues.Add(SkillIssue.Warning(null, $"Price Stat \"{tree.PriceStat}\" isn't a stat of this tree, so prices aren't scaled."));
+                else if (price.Kind != SkillStatKind.Percent)
+                    issues.Add(SkillIssue.Error(null, $"Price Stat \"{price.DisplayName}\" must be a Percent stat (it is {price.Kind}): prices would not scale correctly."));
+            }
+        }
+
+        private static void CheckCurrencies(SkillTree tree, List<SkillIssue> issues)
+        {
+            var currencies = tree.Currencies.Where(c => c != null).ToList();
+            foreach (var currency in currencies.Where(c => string.IsNullOrWhiteSpace(c.Key)))
+                issues.Add(SkillIssue.Error(null, $"Currency \"{currency.DisplayName}\" has no Key, so the wallet can't tell it apart."));
+            foreach (var group in currencies.Where(c => !string.IsNullOrWhiteSpace(c.Key)).GroupBy(c => c.Key.ToLowerInvariant()).Where(g => g.Count() > 1))
+                issues.Add(SkillIssue.Error(null, $"{group.Count()} currencies share the Key \"{group.First().Key}\": the wallet would treat them as one."));
         }
 
         private static void CheckEffects(SkillTree tree, SkillNode node, List<SkillIssue> issues)
         {
-            if (node.Cost != null && node.Cost.Any(c => c.Currency == null))
-                issues.Add(SkillIssue.Warning(node, "A cost has no currency, so it is skipped."));
+            if (node.Cost != null)
+                foreach (var cost in node.Cost)
+                {
+                    if (cost.Currency == null) issues.Add(SkillIssue.Warning(node, "A cost has no currency, so it is skipped."));
+                    else if (!tree.Currencies.Contains(cost.Currency)) issues.Add(SkillIssue.Error(node, $"Costs currency \"{cost.Currency.DisplayName}\" from another tree."));
+                }
 
             foreach (var effect in node.GetEffects())
             {

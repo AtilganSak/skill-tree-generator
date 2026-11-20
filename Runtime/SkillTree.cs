@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using Object = UnityEngine.Object;
 
 namespace HeatInteractive.SkillTreeGenerator
 {
@@ -17,6 +16,7 @@ namespace HeatInteractive.SkillTreeGenerator
         [HideInInspector] public List<SkillNode> Nodes = new();
         [HideInInspector] public List<SkillGroup> Groups = new();
         [HideInInspector] public List<SkillStat> Stats = new();
+        [HideInInspector] public List<SkillCurrency> Currencies = new();
         [Tooltip("The next new node's Id. Only grows, so a deleted node's save key is never handed out again.")]
         [HideInInspector] public int NextId = 1;
         [HideInInspector] public SkillTreeLayout Layout = new();
@@ -75,6 +75,15 @@ namespace HeatInteractive.SkillTreeGenerator
         {
             Build();
             return key != null && _statByKey.TryGetValue(key, out var stat) ? stat : null;
+        }
+
+        /// The currency with this Key (case doesn't matter), or null.
+        public SkillCurrency Currency(string key)
+        {
+            if (key == null) return null;
+            foreach (var currency in Currencies)
+                if (currency != null && string.Equals(currency.Key, key, StringComparison.OrdinalIgnoreCase)) return currency;
+            return null;
         }
 
         /// Drops the caches. Call it after changing nodes, links, effects or stats from code (the editor does).

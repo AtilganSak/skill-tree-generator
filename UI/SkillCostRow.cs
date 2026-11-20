@@ -1,7 +1,6 @@
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using Object = UnityEngine.Object;
 
 namespace HeatInteractive.SkillTreeGenerator.UI
 {
@@ -14,9 +13,9 @@ namespace HeatInteractive.SkillTreeGenerator.UI
         public TMP_Text NameText;
         public TMP_Text AmountText;
 
-        public void Bind(Object currency, string amount, Color? tint = null)
+        public void Bind(SkillCurrency currency, string amount, Color? tint = null)
         {
-            var sprite = SkillCurrencies.IconOf(currency);
+            var sprite = currency != null ? currency.Icon : null;
             if (Icon != null)
             {
                 Icon.sprite = sprite;
@@ -24,7 +23,7 @@ namespace HeatInteractive.SkillTreeGenerator.UI
             }
             if (NameText != null)
             {
-                NameText.text = SkillCurrencies.NameOf(currency);
+                NameText.text = currency != null ? currency.DisplayName : "?";
                 if (tint.HasValue) NameText.color = tint.Value;
             }
             if (AmountText == null) return;

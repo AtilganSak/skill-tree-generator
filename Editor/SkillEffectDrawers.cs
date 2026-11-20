@@ -56,6 +56,52 @@ namespace HeatInteractive.SkillTreeGenerator.Editing
         private static string Label(SkillStat s) => $"{s.DisplayName}  ({(s.Kind == SkillStatKind.Flag ? "flag" : s.Kind == SkillStatKind.Percent ? "%" : string.IsNullOrEmpty(s.Unit) ? "flat" : s.Unit)})";
     }
 
+    /// A SkillCurrency field picks from its own tree's currencies (or makes a new one), not from the whole project.
+    [CustomPropertyDrawer(typeof(SkillCurrency))]
+    internal class SkillCurrencyDrawer : PropertyDrawer
+    {
+        private const string NewCurrency = "+ New Currency";
+
+        public override VisualElement CreatePropertyGUI(SerializedProperty property)
+        {
+            var tree = AssetDatabase.LoadMainAssetAtPath(AssetDatabase.GetAssetPath(property.serializedObject.targetObject)) as SkillTree;
+            if (tree == null)
+            {
+                var field = new ObjectField(property.displayName) { objectType = typeof(SkillCurrency), allowSceneObjects = false };
+                field.BindProperty(property);
+                return field;
+            }
+
+            var currencies = tree.Currencies.Where(c => c != null).OrderBy(c => c.DisplayName).ToList();
+            var choices = new List<string> { "None" };
+            choices.AddRange(currencies.Select(c => c.DisplayName));
+            choices.Add(NewCurrency);
+            var current = property.objectReferenceValue as SkillCurrency;
+            int index = current == null ? 0 : currencies.IndexOf(current) + 1;
+
+            var dropdown = new DropdownField(property.displayName, choices, Mathf.Max(0, index));
+            dropdown.AddToClassList(BaseField<string>.alignedFieldUssClassName);
+            dropdown.tooltip = "What this price is paid in. Currencies are defined in the tree panel (pick nothing on the canvas) > Currencies.";
+            if (property.hasMultipleDifferentValues) dropdown.SetValueWithoutNotify("—");
+            dropdown.RegisterValueChangedCallback(_ =>
+            {
+                int i = dropdown.index;
+                bool created = i == choices.Count - 1;
+                SkillCurrency pick;
+                if (created)
+                {
+                    pick = SkillTreeEditing.CreateCurrency(tree);
+                    SkillTreeWindow.RefreshOpen();
+                }
+                else pick = i <= 0 ? null : currencies[i - 1];
+                property.objectReferenceValue = pick;
+                property.serializedObject.ApplyModifiedProperties();
+                if (created) dropdown.SetValueWithoutNotify(pick.DisplayName);
+            });
+            return dropdown;
+        }
+    }
+
     /// One effect: the stat, how much per rank (with its unit), and the start rank.
     [CustomPropertyDrawer(typeof(SkillEffect))]
     internal class SkillEffectDrawer : PropertyDrawer

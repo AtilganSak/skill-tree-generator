@@ -18,7 +18,7 @@ namespace HeatInteractive.SkillTreeGenerator
         public Sprite Icon;
         public SkillGroup Group;
         [Min(1)] public int MaxRank = 1;
-        [Tooltip("Rank 1's price. Empty = free. The currency is any asset the game's ISkillWallet knows (a coin, a loot type...).")]
+        [Tooltip("Rank 1's price. Empty = free. Currencies are defined in the Skill Tree Editor (Currencies).")]
         public List<SkillCost> Cost = new();
         [Min(1f), Tooltip("Each rank after the first costs this many times the one before.")]
         public float CostGrowth = 1.35f;
