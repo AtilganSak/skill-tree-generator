@@ -56,7 +56,12 @@ var ranks = SkillRanks.FromJson(json);
 SkillBook.Current = new SkillBook(tree, ranks, new GameWallet());
 ```
 
-`ranks.Changed` fires whenever a rank is set or cleared: a good moment to save.
+`SkillRanks.Changed` fires whenever a rank is set or cleared (a buy, `SetRank`, a respec): a good moment to save.
+
+```csharp
+var book = SkillBook.Current;
+book.Ranks.Changed += () => SaveToDisk(book.Ranks.ToJson());   // your own save code
+```
 
 ## Use the skills
 
