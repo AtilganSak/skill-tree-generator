@@ -234,15 +234,24 @@ namespace HeatInteractive.SkillTreeGenerator.UI
             var rect = (RectTransform)view.transform;
             CenterAnchors(rect);
             rect.anchoredPosition = node.Position;
-            if (node.IsRoot && RootNodePrefab == null) rect.localScale = Vector3.one * RootScale;
+            if (node.IsRoot && RootNodePrefab == null && prefab == NodePrefab) rect.localScale = Vector3.one * RootScale; // a custom view keeps its own size
             view.Bind(node);
             view.Clicked = Select;
             _nodes.Add(view);
             _views[node] = view;
         }
 
-        /// Which prefab draws this node. Override to pick by node type or group.
-        protected virtual SkillNodeView PrefabFor(SkillNode node) => node.IsRoot && RootNodePrefab != null ? RootNodePrefab : NodePrefab;
+        /// Which prefab draws this node: the node's own ViewPrefab if it has one, else the root / node prefab. Override to
+        /// pick by node type or group.
+        protected virtual SkillNodeView PrefabFor(SkillNode node)
+        {
+            if (node.ViewPrefab != null)
+            {
+                if (node.ViewPrefab.TryGetComponent<SkillNodeView>(out var custom)) return custom;
+                Debug.LogWarning($"Skills: \"{node.DisplayName}\" has a View Prefab without a SkillNodeView on its root, so the default view is used.", node);
+            }
+            return node.IsRoot && RootNodePrefab != null ? RootNodePrefab : NodePrefab;
+        }
 
         private void BuildWallet(SkillTree tree)
         {

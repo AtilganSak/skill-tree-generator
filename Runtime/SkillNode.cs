@@ -16,6 +16,8 @@ namespace HeatInteractive.SkillTreeGenerator
         public string DisplayName = "New Skill";
         [TextArea(2, 6)] public string Description;
         public Sprite Icon;
+        [Tooltip("Optional: a prefab with a SkillNodeView, to draw this node differently on the panel. Empty = the panel's own node prefab.")]
+        public GameObject ViewPrefab;
         public SkillGroup Group;
         [Min(1)] public int MaxRank = 1;
         [Tooltip("Rank 1's price. Empty = free. Currencies are defined in the Skill Tree Editor (Currencies).")]
