@@ -163,7 +163,9 @@ namespace HeatInteractive.SkillTreeGenerator.Editing
             return row;
         }
 
-        private VisualElement NodeChip(VisualElement parent, SkillNode node, Action remove, string removeTip)
+        /// A skill as a chip. Click picks it, or runs click instead (with its own tooltip).
+        private VisualElement NodeChip(VisualElement parent, SkillNode node, Action remove, string removeTip,
+            Action click = null, string clickTip = null)
         {
             var chip = new VisualElement();
             chip.AddToClassList("chip");
@@ -174,9 +176,14 @@ namespace HeatInteractive.SkillTreeGenerator.Editing
             var name = new Label(node.DisplayName);
             name.AddToClassList("chip__name");
             chip.Add(name);
-            chip.tooltip = "Click to pick it.";
+            chip.tooltip = click != null ? clickTip : "Click to pick it.";
             chip.RegisterCallback<ClickEvent>(_ =>
             {
+                if (click != null)
+                {
+                    click();
+                    return;
+                }
                 Canvas.SelectOnly(node);
                 Canvas.Frame(new[] { node });
             });
@@ -248,6 +255,7 @@ namespace HeatInteractive.SkillTreeGenerator.Editing
             var position = new PropertyField(so.FindProperty(nameof(SkillNode.Position)), "Position");
             position.Bind(so);
             place.Add(position);
+            if (Canvas.Simulation == null) BuildSwap(place, node);
             var actions = Row(place);
             if (!node.IsRoot) ActionButton(actions, "Set as Root", () =>
             {
@@ -257,6 +265,41 @@ namespace HeatInteractive.SkillTreeGenerator.Editing
             });
             ActionButton(actions, "Duplicate", Canvas.DuplicateSelection);
             if (!node.IsRoot) ActionButton(actions, "Delete", () => Canvas.Delete(new List<SkillNode> { node }), "action--danger");
+        }
+
+        private const int SwapResults = 8;
+
+        /// Search a skill by name, click it: the two swap places in the tree (position, links and requirements go with
+        /// the place, so the drawn tree doesn't change; each skill keeps its own Id and data).
+        private void BuildSwap(VisualElement section, SkillNode node)
+        {
+            var title = new Label("Swap places with");
+            title.AddToClassList("sub-title");
+            section.Add(title);
+            var search = new ToolbarSearchField { tooltip = "Type part of a skill's name, then click it. The two take each other's place in the tree (links and requirements too)." };
+            search.AddToClassList("stat-filter");
+            section.Add(search);
+            var results = new VisualElement();
+            results.AddToClassList("chips");
+            section.Add(results);
+
+            search.RegisterValueChangedCallback(e =>
+            {
+                results.Clear();
+                string text = e.newValue;
+                if (string.IsNullOrWhiteSpace(text)) return;
+                var found = Tree.Nodes
+                    .Where(n => n != null && n != node && n.DisplayName != null && n.DisplayName.IndexOf(text, StringComparison.OrdinalIgnoreCase) >= 0)
+                    .OrderBy(n => n.DisplayName).ToList();
+                if (found.Count == 0) Hint(results, "No such skill.");
+                foreach (var other in found.Take(SwapResults))
+                    NodeChip(results, other, null, null, () =>
+                    {
+                        SkillTreeEditing.SwapPlaces(Tree, node, other);
+                        _window.OnTreeEdited();
+                    }, $"Swap places with \"{other.DisplayName}\".");
+                if (found.Count > SwapResults) Hint(results, $"{found.Count - SwapResults} more: type more of the name.");
+            });
         }
 
         /// Double-click on a node: straight to its name.

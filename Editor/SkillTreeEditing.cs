@@ -178,6 +178,55 @@ namespace HeatInteractive.SkillTreeGenerator.Editing
             Mark(tree);
         }
 
+        /// The two nodes trade places in the tree: position, links, requirements, link styles and the root mark move
+        /// with the place, so the drawn tree looks exactly the same. What stays with each node: Id (the save key),
+        /// name, effects, cost and every other field.
+        public static void SwapPlaces(SkillTree tree, SkillNode a, SkillNode b)
+        {
+            if (a == null || b == null || a == b) return;
+            SkillNode Other(SkillNode n) => n == a ? b : n == b ? a : n;
+            bool Touches(SkillNode n) => n == a || n == b;
+
+            var nodes = tree.Nodes.Where(n => n != null).ToList();
+            var touched = nodes.Where(n => Touches(n) || n.Neighbors.Any(Touches) || n.Requires.Any(Touches)).Cast<Object>().ToList();
+            touched.Add(tree);
+            Undo.RecordObjects(touched.ToArray(), "Swap Skills");
+
+            // Every link and requirement that touches a or b, taken before they are rewritten.
+            var links = new List<(SkillNode x, SkillNode y)>();
+            var needs = new List<(SkillNode node, SkillNode need)>();
+            foreach (var n in nodes)
+            {
+                links.AddRange(n.Neighbors.Where(o => o != null && (Touches(n) || Touches(o))).Select(o => (n, o)));
+                needs.AddRange(n.Requires.Where(o => o != null && (Touches(n) || Touches(o))).Select(o => (n, o)));
+                if (Touches(n))
+                {
+                    n.Neighbors.Clear();
+                    n.Requires.Clear();
+                }
+                else
+                {
+                    n.Neighbors.RemoveAll(Touches);
+                    n.Requires.RemoveAll(Touches);
+                }
+            }
+            // The same pairs with a and b exchanged.
+            foreach (var (x, y) in links)
+                if (!AreLinked(Other(x), Other(y))) Other(x).Neighbors.Add(Other(y));
+            foreach (var (node, need) in needs)
+                if (!Other(node).Requires.Contains(Other(need))) Other(node).Requires.Add(Other(need));
+            foreach (var edge in tree.Edges)
+                if (edge != null)
+                {
+                    edge.A = Other(edge.A);
+                    edge.B = Other(edge.B);
+                }
+
+            (a.Position, b.Position) = (b.Position, a.Position);
+            (a.IsRoot, b.IsRoot) = (b.IsRoot, a.IsRoot);
+            Mark(tree, touched.ToArray());
+        }
+
         public static void SetRoot(SkillTree tree, SkillNode root)
         {
             var nodes = tree.Nodes.Where(n => n != null).ToArray();
