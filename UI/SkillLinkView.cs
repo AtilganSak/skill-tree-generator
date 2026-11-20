@@ -34,6 +34,16 @@ namespace HeatInteractive.SkillTreeGenerator.UI
             rect.localRotation = Quaternion.Euler(0f, 0f, Mathf.Atan2(delta.y, delta.x) * Mathf.Rad2Deg);
         }
 
+        /// Takes a style's width and colors (null = leave the prefab's own). Call after Place, before SetOn.
+        public void Apply(SkillLinkStyle style)
+        {
+            if (style == null) return;
+            var rect = (RectTransform)transform;
+            rect.sizeDelta = new Vector2(rect.sizeDelta.x, style.Width);
+            OffColor = style.OffColor;
+            OnColor = style.OnColor;
+        }
+
         public void SetVisible(bool visible)
         {
             if (gameObject.activeSelf != visible) gameObject.SetActive(visible);

@@ -417,6 +417,8 @@ namespace HeatInteractive.SkillTreeGenerator.Editing
             NodeChip(chips, a, null, null);
             NodeChip(chips, b, null, null);
 
+            if (linked) BuildEdgeLook(a, b);
+
             var change = Section("Change");
             var row = Row(change);
             ActionButton(row, $"\"{a.DisplayName}\" first", () => { SkillTreeEditing.SetRequirement(Tree, b, a); _window.OnTreeEdited(); });
@@ -431,6 +433,68 @@ namespace HeatInteractive.SkillTreeGenerator.Editing
             {
                 SkillTreeEditing.Disconnect(Tree, a, b);
                 Canvas.ClearSelection();
+                _window.OnTreeEdited();
+            }, "action--danger");
+        }
+
+        private const string DefaultLook = "Default (the panel's link prefab)";
+        private const string NewLook = "+ New Style";
+
+        /// The link's line on the panel: pick a style (a preset shared by links) and edit it here.
+        private void BuildEdgeLook(SkillNode a, SkillNode b)
+        {
+            var section = Section("Look", "The line's width and colors on the panel. A style is shared: editing it changes every link that uses it.");
+            var styles = Tree.LinkStyles.Where(s => s != null).OrderBy(s => s.DisplayName).ToList();
+            var current = Tree.LinkStyleOf(a, b);
+
+            var choices = new List<string> { DefaultLook };
+            choices.AddRange(styles.Select(s => s.DisplayName));
+            choices.Add(NewLook);
+            var dropdown = new DropdownField("Style", choices, current == null ? 0 : styles.IndexOf(current) + 1);
+            dropdown.AddToClassList(BaseField<string>.alignedFieldUssClassName);
+            dropdown.RegisterValueChangedCallback(_ =>
+            {
+                int i = dropdown.index;
+                var pick = i == choices.Count - 1 ? SkillTreeEditing.CreateLinkStyle(Tree) : i <= 0 ? null : styles[i - 1];
+                SkillTreeEditing.SetLinkStyle(Tree, a, b, pick);
+                _window.OnTreeEdited();
+            });
+            section.Add(dropdown);
+            if (current == null)
+            {
+                Hint(section, "No style: drawn as the panel's link prefab is. Pick \"+ New Style\" to change this link's look.");
+                return;
+            }
+
+            var so = new SerializedObject(current);
+            for (var it = so.GetIterator(); it.NextVisible(it.propertyPath == ""); )
+            {
+                if (it.propertyPath == "m_Script") continue;
+                var field = new PropertyField(it.Copy());
+                field.Bind(so);
+                section.Add(field);
+            }
+            section.TrackSerializedObjectValue(so, _ =>
+            {
+                SkillTreeEditing.SyncName(current);
+                _window.OnStatsEdited(false);
+            });
+
+            int uses = SkillTreeEditing.UsesOf(Tree, current);
+            Hint(section, $"Used by {uses} link{(uses == 1 ? "" : "s")}.");
+            var actions = Row(section);
+            ActionButton(actions, "Apply to all links", () =>
+            {
+                if (Tree.Edges.Any(e => e != null && e.Style != current) &&
+                    !EditorUtility.DisplayDialog("Apply to all links", $"Every link of the tree will use \"{current.DisplayName}\".", "Apply", "Cancel")) return;
+                SkillTreeEditing.SetAllLinkStyles(Tree, current);
+                _window.OnTreeEdited();
+            });
+            ActionButton(actions, "Delete style", () =>
+            {
+                if (uses > 1 && !EditorUtility.DisplayDialog("Delete style",
+                        $"\"{current.DisplayName}\" is used by {uses} links. They go back to the panel's own look.", "Delete", "Cancel")) return;
+                SkillTreeEditing.DeleteLinkStyle(Tree, current);
                 _window.OnTreeEdited();
             }, "action--danger");
         }

@@ -220,6 +220,7 @@ namespace HeatInteractive.SkillTreeGenerator.UI
                     link.name = $"{node.name} - {other.name}";
                     CenterAnchors((RectTransform)link.transform);
                     link.Place(node, other);
+                    link.Apply(tree.LinkStyleOf(node, other));
                     _links.Add(link);
                 }
             }

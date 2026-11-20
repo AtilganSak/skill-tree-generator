@@ -943,9 +943,11 @@ namespace HeatInteractive.SkillTreeGenerator.Editing
                 bool picked = SelectedEdge is { } e && ((e.a == a && e.b == b) || (e.a == b && e.b == a));
                 bool touches = _picked.Contains(a) || _picked.Contains(b);
                 float alpha = EdgeAlpha(a, b, touches);
-                var color = picked ? PickColor : required ? RequireColor : LinkColor;
+                var style = required ? null : Tree.LinkStyleOf(a, b); // a style shows its color and width, so the canvas matches the panel
+                var color = picked ? PickColor : required ? RequireColor : style != null ? style.OnColor : LinkColor;
                 color.a = picked ? 1f : required ? Mathf.Min(1f, alpha + 0.25f) : alpha;
-                float width = (picked ? 3.5f : touches ? 3f : 2f) * Mathf.Clamp(_zoom * 1.4f, 0.6f, 1.4f);
+                float width = (picked ? 3.5f : touches ? 3f : 2f) * Mathf.Clamp(_zoom * 1.4f, 0.6f, 1.4f)
+                    * (style != null ? Mathf.Clamp(style.Width / 5f, 0.4f, 3f) : 1f); // 5 = the link prefab's default width
 
                 if (required && !linked) Dashed(p, from, to, color, width);
                 else Line(p, from, to, color, width);

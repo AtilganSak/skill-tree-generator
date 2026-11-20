@@ -51,6 +51,8 @@ namespace HeatInteractive.SkillTreeGenerator.Editing
         {
             foreach (var o in changed) if (o != null) EditorUtility.SetDirty(o);
             EditorUtility.SetDirty(tree);
+            // A style stays only on a pair that is still linked (a deleted node, a removed link: the entry goes too).
+            tree.Edges.RemoveAll(e => e == null || e.A == null || e.B == null || e.Style == null || !AreLinked(e.A, e.B));
             tree.Invalidate();
         }
 
@@ -63,6 +65,7 @@ namespace HeatInteractive.SkillTreeGenerator.Editing
                 SkillGroup group => group.DisplayName,
                 SkillStat stat => stat.DisplayName,
                 SkillCurrency currency => currency.DisplayName,
+                SkillLinkStyle style => style.DisplayName,
                 _ => o.name
             };
             if (string.IsNullOrWhiteSpace(want)) want = "Unnamed";
@@ -378,6 +381,59 @@ namespace HeatInteractive.SkillTreeGenerator.Editing
 
         public static List<SkillNode> UsersOf(SkillTree tree, SkillCurrency currency) =>
             tree.Nodes.Where(n => n != null && n.Cost != null && n.Cost.Any(c => c.Currency == currency)).ToList();
+
+        // ---------------------------------------------------------------- link styles
+
+        public static SkillLinkStyle CreateLinkStyle(SkillTree tree)
+        {
+            var style = ScriptableObject.CreateInstance<SkillLinkStyle>();
+            style.hideFlags = HideFlags.HideInHierarchy;
+            style.DisplayName = $"Link Style {tree.LinkStyles.Count + 1}";
+            SyncName(style);
+            Undo.RecordObject(tree, "Create Link Style");
+            AssetDatabase.AddObjectToAsset(style, tree);
+            Undo.RegisterCreatedObjectUndo(style, "Create Link Style");
+            tree.LinkStyles.Add(style);
+            Mark(tree, style);
+            return style;
+        }
+
+        /// Removes the style; its links go back to the panel's link prefab as it is.
+        public static void DeleteLinkStyle(SkillTree tree, SkillLinkStyle style)
+        {
+            int undo = BeginGroup("Delete Link Style");
+            Undo.RecordObject(tree, "Delete Link Style");
+            tree.Edges.RemoveAll(e => e == null || e.Style == style);
+            tree.LinkStyles.Remove(style);
+            Undo.DestroyObjectImmediate(style);
+            Undo.CollapseUndoOperations(undo);
+            Mark(tree);
+        }
+
+        /// Gives the link between a and b this style (null = back to the panel's own look).
+        public static void SetLinkStyle(SkillTree tree, SkillNode a, SkillNode b, SkillLinkStyle style)
+        {
+            Undo.RecordObject(tree, "Set Link Style");
+            tree.Edges.RemoveAll(e => e != null && ((e.A == a && e.B == b) || (e.A == b && e.B == a)));
+            if (style != null) tree.Edges.Add(new SkillEdge { A = a, B = b, Style = style });
+            Mark(tree);
+        }
+
+        /// Every link of the tree uses this style.
+        public static void SetAllLinkStyles(SkillTree tree, SkillLinkStyle style)
+        {
+            Undo.RecordObject(tree, "Apply Link Style To All");
+            tree.Edges.Clear();
+            foreach (var node in tree.Nodes)
+            {
+                if (node == null) continue;
+                foreach (var other in tree.LinksOf(node))
+                    if (other != null && node.Id < other.Id) tree.Edges.Add(new SkillEdge { A = node, B = other, Style = style });
+            }
+            Mark(tree);
+        }
+
+        public static int UsesOf(SkillTree tree, SkillLinkStyle style) => tree.Edges.Count(e => e != null && e.Style == style);
 
         // ---------------------------------------------------------------- groups
 

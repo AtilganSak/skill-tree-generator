@@ -17,6 +17,9 @@ namespace HeatInteractive.SkillTreeGenerator
         [HideInInspector] public List<SkillGroup> Groups = new();
         [HideInInspector] public List<SkillStat> Stats = new();
         [HideInInspector] public List<SkillCurrency> Currencies = new();
+        [HideInInspector] public List<SkillLinkStyle> LinkStyles = new();
+        // Which style each styled link uses; a link without an entry is drawn with the panel's link prefab as it is.
+        [HideInInspector] public List<SkillEdge> Edges = new();
         [Tooltip("The next new node's Id. Only grows, so a deleted node's save key is never handed out again.")]
         [HideInInspector] public int NextId = 1;
         [HideInInspector] public SkillTreeLayout Layout = new();
@@ -30,6 +33,7 @@ namespace HeatInteractive.SkillTreeGenerator
         [NonSerialized] private readonly Dictionary<Type, object> _byType = new();
         [NonSerialized] private readonly Dictionary<SkillStat, List<(SkillNode node, SkillEffect effect)>> _byStat = new();
         [NonSerialized] private readonly Dictionary<string, SkillStat> _statByKey = new(StringComparer.OrdinalIgnoreCase);
+        [NonSerialized] private readonly Dictionary<long, SkillLinkStyle> _edgeStyles = new();
         private static readonly List<SkillNode> NoLinks = new();
 
         /// Percent stats never multiply below this (a -150% cooldown would be nonsense).
@@ -77,6 +81,15 @@ namespace HeatInteractive.SkillTreeGenerator
             return key != null && _statByKey.TryGetValue(key, out var stat) ? stat : null;
         }
 
+        /// The style of the link between two nodes (either order), or null = the panel's link prefab as it is.
+        public SkillLinkStyle LinkStyleOf(SkillNode a, SkillNode b)
+        {
+            Build();
+            return a != null && b != null && _edgeStyles.TryGetValue(EdgeKey(a, b), out var style) ? style : null;
+        }
+
+        private static long EdgeKey(SkillNode a, SkillNode b) => ((long)Mathf.Min(a.Id, b.Id) << 32) | (uint)Mathf.Max(a.Id, b.Id);
+
         /// The currency with this Key (case doesn't matter), or null.
         public SkillCurrency Currency(string key)
         {
@@ -105,6 +118,10 @@ namespace HeatInteractive.SkillTreeGenerator
             _links.Clear();
             _byStat.Clear();
             _statByKey.Clear();
+            _edgeStyles.Clear();
+
+            foreach (var edge in Edges)
+                if (edge != null && edge.A != null && edge.B != null && edge.Style != null) _edgeStyles[EdgeKey(edge.A, edge.B)] = edge.Style;
 
             foreach (var stat in Stats)
                 if (stat != null && !string.IsNullOrEmpty(stat.Key)) _statByKey.TryAdd(stat.Key, stat);
@@ -239,6 +256,15 @@ namespace HeatInteractive.SkillTreeGenerator
             if (NextId < 1) NextId = 1;
         }
 #endif
+    }
+
+    /// A link (the two nodes, either order) that uses a SkillLinkStyle. Set in the Skill Tree Editor.
+    [Serializable]
+    public class SkillEdge
+    {
+        public SkillNode A;
+        public SkillNode B;
+        public SkillLinkStyle Style;
     }
 
     /// Editor canvas settings, saved with the tree so everyone sees the same grid.
