@@ -284,6 +284,58 @@
     display: none;
 }
 
+.skill-node__dup {
+    display: none;
+    position: absolute;
+    right: -8px;
+    bottom: -8px;
+    width: 22px;
+    height: 22px;
+    border-radius: 11px;
+    background-color: rgb(205, 210, 220);
+    border-width: 2px;
+    border-color: rgb(28, 29, 33);
+}
+
+.skill-node:hover .skill-node__dup {
+    display: flex;
+}
+
+.skill-node__dup:hover {
+    background-color: rgb(240, 243, 250);
+    scale: 1.15 1.15;
+}
+
+/* two overlapping squares: the copy icon */
+.skill-node__dup-back,
+.skill-node__dup-front {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    border-width: 1.5px;
+    border-radius: 2px;
+    border-color: rgb(25, 30, 40);
+}
+
+.skill-node__dup-back {
+    left: 3px;
+    top: 3px;
+}
+
+.skill-node__dup-front {
+    left: 6px;
+    top: 6px;
+    background-color: rgb(205, 210, 220);
+}
+
+.skill-node__dup:hover .skill-node__dup-front {
+    background-color: rgb(240, 243, 250);
+}
+
+.canvas--simulating .skill-node__dup {
+    display: none;
+}
+
 .skill-node__label {
     position: absolute;
     top: 100%;

@@ -7,14 +7,14 @@ namespace HeatInteractive.SkillTreeGenerator.Editing
     internal enum SimState { Off, Locked, Available, Owned, Maxed }
 
     /// One node on the canvas: a colored circle (group color, icon or initials), its name and summary under it, a rank
-    /// pill, an issue badge and the "+" connect handle (shown on hover).
+    /// pill, an issue badge, and the "+" connect and duplicate handles (shown on hover).
     internal class SkillNodeElement : VisualElement
     {
         public const float Radius = 32f, RootRadius = 42f;
         private static readonly Color NoGroup = new(0.55f, 0.58f, 0.64f), Base = new(0.13f, 0.14f, 0.16f);
 
         public readonly SkillNode Node;
-        public readonly VisualElement Port;
+        public readonly VisualElement Port, DuplicatePort;
         private readonly VisualElement _circle, _badge;
         private readonly Image _icon;
         private readonly Label _initials, _title, _summary, _rank;
@@ -43,6 +43,12 @@ namespace HeatInteractive.SkillTreeGenerator.Editing
             Port.pickingMode = PickingMode.Position;
             Port.tooltip = "Drag to another skill to connect them.\nHold Ctrl (Cmd) while releasing to make it a requirement.\nRelease on empty space to create a new connected skill.";
             NewLabel(Port, "skill-node__port-text").text = "+";
+
+            DuplicatePort = Child(this, "skill-node__dup");
+            DuplicatePort.pickingMode = PickingMode.Position;
+            DuplicatePort.tooltip = "Duplicate this skill on a free spot next to it.";
+            Child(DuplicatePort, "skill-node__dup-back");
+            Child(DuplicatePort, "skill-node__dup-front");
 
             var label = Child(this, "skill-node__label");
             label.pickingMode = PickingMode.Position; // clicking the name picks the node too

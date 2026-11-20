@@ -354,10 +354,10 @@ namespace HeatInteractive.SkillTreeGenerator.Editing
             return null;
         }
 
-        private static bool IsPort(VisualElement target, SkillNodeElement element)
+        private static bool IsPart(VisualElement target, SkillNodeElement element, VisualElement part)
         {
             for (var e = target; e != null && e != element; e = e.parent)
-                if (e == element.Port) return true;
+                if (e == part) return true;
             return false;
         }
 
@@ -396,6 +396,13 @@ namespace HeatInteractive.SkillTreeGenerator.Editing
                 return;
             }
 
+            if (element != null && IsPart(evt.target as VisualElement, element, element.DuplicatePort))
+            {
+                DuplicateNear(element.Node);
+                evt.StopPropagation();
+                return;
+            }
+
             if (evt.clickCount == 2)
             {
                 if (element != null) NodeDoubleClicked?.Invoke(element.Node);
@@ -404,7 +411,7 @@ namespace HeatInteractive.SkillTreeGenerator.Editing
                 return;
             }
 
-            if (element != null && IsPort(evt.target as VisualElement, element))
+            if (element != null && IsPart(evt.target as VisualElement, element, element.Port))
             {
                 _dragNode = element.Node;
                 _connectRequire = evt.actionKey;
@@ -666,6 +673,16 @@ namespace HeatInteractive.SkillTreeGenerator.Editing
         {
             if (Simulation != null || _selection.Count == 0) return;
             var copies = SkillTreeEditing.Duplicate(Tree, _selection, new Vector2(60f, -60f));
+            foreach (var copy in copies) AddElement(copy);
+            Select(copies);
+            Changed();
+        }
+
+        /// The duplicate handle: a copy of the node (same links, like Ctrl+D) on a free spot next to it.
+        private void DuplicateNear(SkillNode node)
+        {
+            var spot = Snap(SkillTreeEditing.PlaceNear(Tree, node, Mathf.Max(100f, Tree.Layout.RingSpacing * 0.6f)));
+            var copies = SkillTreeEditing.Duplicate(Tree, new[] { node }, spot - node.Position);
             foreach (var copy in copies) AddElement(copy);
             Select(copies);
             Changed();

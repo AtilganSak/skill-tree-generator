@@ -745,6 +745,7 @@ namespace HeatInteractive.SkillTreeGenerator.Editing
                 ("Double-click empty space", "Create a skill there"),
                 ("Drag the + handle", "Connect two skills (release on empty space: new connected skill)"),
                 ("Ctrl + drag the + handle", "Requirement: the target needs this one first"),
+                ("Click the copy handle (bottom right)", "Duplicate the skill on a free spot next to it"),
                 ("Click / Shift-click", "Pick / add to the picked skills"),
                 ("Drag on empty space", "Box select"),
                 ("Middle drag, Alt + drag", "Pan"),
