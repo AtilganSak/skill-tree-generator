@@ -88,6 +88,7 @@ namespace HeatInteractive.SkillTreeGenerator.UI
         private readonly List<(SkillCurrency currency, SkillCostRow row)> _wallet = new();
         private SkillNodeView _selected;
         private int _walletSignature;
+        private bool _dirty;
 
         public IReadOnlyList<SkillNodeView> Nodes => _nodes;
         public SkillNodeView Selected => _selected;
@@ -117,20 +118,21 @@ namespace HeatInteractive.SkillTreeGenerator.UI
             if (CloseButton != null) CloseButton.onClick.RemoveListener(Close);
             if (RespecButton != null) RespecButton.onClick.RemoveListener(Respec);
             if (Detail != null && Detail.BuyButton != null) Detail.BuyButton.onClick.RemoveListener(OnBuyClicked);
-            if (_subscribed != null) _subscribed.Changed -= OnBookChanged;
+            if (_subscribed != null) _subscribed.RankChanged -= OnRankChanged;
             _subscribed = null;
             if (ConfirmPopup != null) ConfirmPopup.gameObject.SetActive(false); // a popup must not outlive the panel's open
         }
 
         private void Rebind()
         {
-            if (_subscribed != null) _subscribed.Changed -= OnBookChanged;
+            if (_subscribed != null) _subscribed.RankChanged -= OnRankChanged;
             _subscribed = Book;
-            _subscribed.Changed += OnBookChanged;
+            _subscribed.RankChanged += OnRankChanged;
             Rebuild();
         }
 
-        private void OnBookChanged() => Refresh();
+        // A respec raises one per owned node, so repaint once (Update, or right after Buy / ConfirmRespec), not per event.
+        private void OnRankChanged(SkillNode node, int from, int to) => _dirty = true;
 
         private void Update()
         {
@@ -144,7 +146,7 @@ namespace HeatInteractive.SkillTreeGenerator.UI
 
             // The book only says when ranks change; money moves on its own, so watch the balances (no allocations).
             int signature = WalletSignature();
-            if (signature != _walletSignature) Refresh();
+            if (_dirty || signature != _walletSignature) Refresh();
         }
 
         private int WalletSignature()
@@ -282,6 +284,7 @@ namespace HeatInteractive.SkillTreeGenerator.UI
 
         private void Refresh(bool instant)
         {
+            _dirty = false;
             var book = Book;
             if (book.Tree != _builtTree)
             {
@@ -382,7 +385,8 @@ namespace HeatInteractive.SkillTreeGenerator.UI
                 BuyFailed?.Invoke(view, why);
                 return false;
             }
-            if (!Book.TryBuy(view.Node)) return false; // the book's Changed already refreshed the panel
+            if (!Book.TryBuy(view.Node)) return false;
+            if (_dirty) Refresh(); // so NodePurchased handlers see the new state
             NodePurchased?.Invoke(view);
             return true;
         }
@@ -398,6 +402,7 @@ namespace HeatInteractive.SkillTreeGenerator.UI
         public void ConfirmRespec()
         {
             Book.Respec();
+            if (_dirty) Refresh();
             Respecced?.Invoke();
         }
 
@@ -419,7 +424,7 @@ namespace HeatInteractive.SkillTreeGenerator.UI
         {
             if (Application.isPlaying || PreviewTree == null) return;
             var book = new SkillBook(PreviewTree, null, null);
-            if (PreviewTree.Root != null) book.SetRank(PreviewTree.Root, 1, false);
+            if (PreviewTree.Root != null) book.SetRank(PreviewTree.Root, 1);
             _bound = book;
             Rebuild();
             foreach (var child in new[] { LinkRoot, NodeRoot, WalletRoot })

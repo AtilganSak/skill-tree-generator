@@ -5,7 +5,7 @@ using UnityEngine;
 namespace HeatInteractive.SkillTreeGenerator
 {
     /// A player in a tree: their ranks, stat reads, and buying with the game's ISkillWallet. The game only
-    /// says where the money is, saves on Changed, and sets Current so gameplay can ask from anywhere.
+    /// says where the money is, saves on RankChanged, and sets Current so gameplay can ask from anywhere.
     /// Reading a stat: GetStat("Key", baseValue). A percent stat multiplies the base, a flat one adds to it: pass 1
     /// for a multiplier, 0 for an amount; a flag stat reads as bool: GetStat("Key", false). A Key the tree doesn't
     /// have leaves the base as it is (warned once: a typo).
@@ -16,8 +16,10 @@ namespace HeatInteractive.SkillTreeGenerator
         public readonly SkillRanks Ranks;
         public readonly ISkillWallet Wallet;
 
-        /// A rank was bought, set or everything was refunded: the moment to save and redraw.
-        public event Action Changed;
+        /// A node's rank changed (node, old rank, new rank): bought, set, or refunded. A respec raises it once per
+        /// owned node (new rank 0), after every rank is cleared and the money is back. "Unlocked for the first time"
+        /// is old == 0 && new > 0. Also the moment to save (debounce if a respec's burst matters).
+        public event Action<SkillNode, int, int> RankChanged;
 
         private static readonly SkillBook Empty = new(null, null, null);
         private static SkillBook _current;
@@ -46,16 +48,15 @@ namespace HeatInteractive.SkillTreeGenerator
 
         public bool IsOwned(SkillNode node) => GetRank(node) > 0;
 
-        /// A rank for free, clamped to 0..MaxRank: dev tools, cheats, rewards. notify = false while setting many in a
-        /// row (raise Changed yourself once with NotifyChanged).
-        public void SetRank(SkillNode node, int rank, bool notify = true)
+        /// A rank for free, clamped to 0..MaxRank: dev tools, cheats, rewards. Raises RankChanged if the rank moved.
+        public void SetRank(SkillNode node, int rank)
         {
             if (node == null) return;
-            Ranks.SetRank(node, Mathf.Clamp(rank, 0, node.MaxRank));
-            if (notify) Changed?.Invoke();
+            int from = GetRank(node), to = Mathf.Clamp(rank, 0, node.MaxRank);
+            if (from == to) return;
+            Ranks.SetRank(node, to);
+            RankChanged?.Invoke(node, from, to);
         }
-
-        public void NotifyChanged() => Changed?.Invoke();
 
         // ---------------------------------------------------------------- stats
 
@@ -139,8 +140,9 @@ namespace HeatInteractive.SkillTreeGenerator
         {
             if (!CanBuy(node)) return false;
             foreach (var cost in Price(node)) Wallet.Remove(cost.Currency, cost.Amount);
-            Ranks.SetRank(node, GetRank(node) + 1);
-            Changed?.Invoke();
+            int from = GetRank(node);
+            Ranks.SetRank(node, from + 1);
+            RankChanged?.Invoke(node, from, from + 1);
             return true;
         }
 
@@ -150,14 +152,19 @@ namespace HeatInteractive.SkillTreeGenerator
         public void Respec()
         {
             var refund = new List<SkillCost>();
+            var owned = new List<(SkillNode node, int rank)>();
             if (Tree != null)
                 foreach (var node in Tree.Nodes)
-                    for (int rank = GetRank(node) - 1; rank >= 0; rank--)
+                {
+                    int had = GetRank(node);
+                    if (had > 0) owned.Add((node, had));
+                    for (int rank = had - 1; rank >= 0; rank--)
                         refund.AddRange(PriceAt(node, rank));
+                }
             Ranks.Clear();
             if (Wallet != null)
                 foreach (var cost in refund) Wallet.Add(cost.Currency, cost.Amount);
-            Changed?.Invoke();
+            foreach (var (node, had) in owned) RankChanged?.Invoke(node, had, 0);
         }
     }
 }
